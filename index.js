@@ -30,26 +30,13 @@ bot.on('message', function (msg) {
 			//msg.channel.send("http://play.pokemonshowdown.com/sprites/xyani/" + args[1] + ".gif")
       //check404(msg, args[1]);
 			var pokemon = args[1];
+			var x = 3;
 			console.log(pokemon)
-			var sql = 'SELECT stat_identifier FROM pokemon where stat_identifier = ?';
-		  connection.query(sql, pokemon,(function(msg){return function(err,rows,fields){
-				console.log(msg)
-				console.log(sql)
-		     var dbfarr = new Array(rows.length);
-		     // Loop over the response rows and put the information into an array of maps
-		     // We can then use this to create our buttons
-
-		     rows.forEach(function (item, index) {
-					 console.log(item)
-		       dbfarr[index] = item.stat_identifier;
-		  });
-			console.log(dbfarr[0])
-		     if(err){
-		       console.log("We have an error:");
-		       console.log(err);
-		     }
-				 msg.channel.send(dbfarr[0])
-		  }})(msg));
+			var info = '';
+			pokemongeninfo(msg, pokemon, function(result){
+				info = result;
+				msg.channel.send(result);
+			})
 		}
     if (args[0] === "shiny" && args[1]){
       msg.channel.send("http://play.pokemonshowdown.com/sprites/xyani-shiny/" + args[1] + ".gif")
@@ -68,4 +55,26 @@ function check404(msg, pokemon){
     }).catch((err) => {
       msg.channel.send("Pokemon not found")
     })
+}
+
+function pokemongeninfo(msg, pokemon, callback){
+	var sql = 'SELECT stat_identifier FROM pokemon where stat_identifier = ?';
+	connection.query(sql, pokemon,function(err,rows,fields){
+				console.log(msg)
+				console.log(sql)
+		     var dbfarr = new Array(rows.length);
+		     // Loop over the response rows and put the information into an array of maps
+		     // We can then use this to create our buttons
+
+		     rows.forEach(function (item, index) {
+					 console.log(item)
+		       dbfarr[index] = item.stat_identifier;
+		  });
+			console.log(dbfarr[0])
+		     if(err){
+		       console.log("We have an error:");
+		       console.log(err);
+		     }
+				 return callback(dbfarr[0])
+		  });
 }
