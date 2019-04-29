@@ -35,7 +35,8 @@ bot.on('message', function (msg) {
 			var info = '';
 			pokemongeninfo(msg, pokemon, function(result){
 				info = result;
-				msg.channel.send(result);
+				//msg.channel.send(result);
+				sendpokemon(msg, pokemon);
 			})
 		}
     if (args[0] === "shiny" && args[1]){
@@ -77,4 +78,12 @@ function pokemongeninfo(msg, pokemon, callback){
 		     }
 				 return callback(dbfarr[0])
 		  });
+}
+
+function sendpokemon(msg, pokemon){
+	var embedmsg = new Discord.RichEmbed()
+		.setTitle(pokemon)
+		.setImage("http://play.pokemonshowdown.com/sprites/xyani/" + pokemon + ".gif")
+
+	msg.channel.send(embedmsg)
 }
