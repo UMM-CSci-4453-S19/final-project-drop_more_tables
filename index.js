@@ -31,12 +31,11 @@ bot.on('message', function (msg) {
       //check404(msg, args[1]);
 			var pokemon = args[1];
 			var x = 3;
-			console.log(pokemon)
 			var info = '';
 			pokemongeninfo(msg, pokemon, function(result){
 				info = result;
 				//msg.channel.send(result);
-				sendpokemon(msg, pokemon);
+				sendpokemon(msg, info);
 			})
 		}
     if (args[0] === "shiny" && args[1]){
@@ -59,17 +58,16 @@ function check404(msg, pokemon){
 }
 
 function pokemongeninfo(msg, pokemon, callback){
-	var sql = 'SELECT stat_identifier FROM pokemon where stat_identifier = ?';
+	var sql = 'SELECT * FROM pokemon where stat_identifier = ?';
 	connection.query(sql, pokemon,function(err,rows,fields){
-				console.log(msg)
-				console.log(sql)
 		     var dbfarr = new Array(rows.length);
 		     // Loop over the response rows and put the information into an array of maps
 		     // We can then use this to create our buttons
 
 		     rows.forEach(function (item, index) {
-					 console.log(item)
-		       dbfarr[index] = item.stat_identifier;
+		       dbfarr[index] = {"name" : item.stat_identifier,
+		       					"id" : item.species_id
+		      				   };
 		  });
 			console.log(dbfarr[0])
 		     if(err){
@@ -81,9 +79,10 @@ function pokemongeninfo(msg, pokemon, callback){
 }
 
 function sendpokemon(msg, pokemon){
+	console.log(pokemon)
 	var embedmsg = new Discord.RichEmbed()
-		.setTitle(pokemon)
-		.setImage("http://play.pokemonshowdown.com/sprites/xyani/" + pokemon + ".gif")
+		.setTitle(pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1))
+		.setImage("http://play.pokemonshowdown.com/sprites/xyani/" + pokemon.name + ".gif")
 
 	msg.channel.send(embedmsg)
 }
