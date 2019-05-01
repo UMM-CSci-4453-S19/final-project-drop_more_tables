@@ -3,6 +3,8 @@ mysql = require('mysql')
 credentials = require('./credentials.json')
 const rp = require('request-promise')
 port = process.env.PORT || 1337;
+var async = require("async");
+//const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
 
 credentials.database = "create_tables"
 credentials.host='ids.morris.umn.edu'; //setup database credentials
@@ -32,10 +34,25 @@ bot.on('message', function (msg) {
 			var pokemon = args[1];
 			var x = 3;
 			var info = '';
+			var abilityinfo = '';
 			pokemongeninfo(msg, pokemon, function(result){
 				info = result;
-				//msg.channel.send(result);
-				sendpokemon(msg, info);
+				pokemonabilitiesinfo(msg, info, info.id, function(result){
+					var abilityinfo = result
+					geteachability(msg, info, abilityinfo, function(result){
+						console.log(result)
+						sendpokemon(msg, info);
+					})
+					//result.forEach(function(item, index){
+						//abilityarr[index] = getabilities(item.ability_id);
+					//})
+					//var abilities = processabilities(abilityarr)
+					//console.log(abilities)
+					//console.log(abilityarr);
+					//console.log(abilityarr[0]);
+					//console.log(abilityarr[1]);
+					//sendpokemon(msg, info);
+				})
 			})
 		}
     if (args[0] === "shiny" && args[1]){
@@ -66,15 +83,109 @@ function pokemongeninfo(msg, pokemon, callback){
 
 		     rows.forEach(function (item, index) {
 		       dbfarr[index] = {"name" : item.stat_identifier,
-		       					"id" : item.species_id
+		       					"species_id" : item.species_id,
+		       					"id" : item.id
 		      				   };
 		  });
-			console.log(dbfarr[0])
+			//console.log(dbfarr[0])
 		     if(err){
 		       console.log("We have an error:");
 		       console.log(err);
 		     }
 				 return callback(dbfarr[0])
+		  });
+}
+
+function pokemonabilitiesinfo(msg, info, id, callback){
+	var sql = 'SELECT * FROM pokemon_abilities where pokemon_id = ?';
+	connection.query(sql, id,function(err,rows,fields){
+		     var dbfarr = new Array(rows.length);
+		     // Loop over the response rows and put the information into an array of maps
+		     // We can then use callbackthis to create our buttons
+
+		     rows.forEach(function (item, index) {
+		       dbfarr[index] = item.ability_id
+		  });
+			//console.log(dbfarr)
+		     if(err){
+		       console.log("We have an error:");
+		       console.log(err);callback
+		     }
+				 return callback(dbfarr)
+		  });
+}
+
+function processabilities(abilityarr){
+	var abilityout = ''
+	abilityarr.forEach(function (item, index){
+		abilityout = abilityout + item.identifier + "\n"
+	})
+	return abilityout;
+}
+
+/*function geteachability(msg, info, abilityarr, callback){
+	var abilities = new Array(callbackabilityarr.length)
+	var itemsProcessed = 0;
+	abilityarr.forEach((item, index) => {
+		AsyncFunction(item, index, () => {
+			abilities[index] = getabilities(item.ability_id);
+			itemsProcessed++;
+			if(itemsProcessed === abilityarr.length){return callback(abilities)}
+		})callback
+})
+}*/
+
+function geteachability(msg, info, abilityarr, callback){
+	var abilities = new Array(abilityarr.length)
+	/*abilityarr.forEach(function(item, index){
+		console.log(item.ability_id)
+		/*getabilities(item.ability_id, index, function(result){
+			//console.log("Hello")
+			abilities[index] = result
+			//console.log(index)
+			//console.log(result)
+			//console.log(abilities[index])
+			console.log(abilities)
+		})
+			abilities[index] = getabilities(item.ability_id);
+			var i = getabilities(item.ability_id);
+			console.log(i)
+			console.log(getabilities(item.ability_id))
+		})
+		console.log(abilities)*/
+		getabilities(abilities, abilityarr, function(result){
+			return callback(result);
+		})
+}
+
+function getabilities(abilities, id, callback){
+	var sql = '';
+	if(id.length = 3){
+	var sql = 'SELECT * FROM abilities where id = ? or id = ? or id = ?';
+} else if (id.length = 2){
+	var sql = 'SELECT * FROM abilities where id = ? or id = ?';
+} else if (id.length = 1){
+	var sql = 'SELECT * FROM abilities where id = ?';
+}
+	console.log(id)
+	//console.log(id)
+	connection.query(sql, id, function(err,rows,fields){
+		//console.log(sql)
+		     var dbfarr = new Array(rows.length);
+		     // Loop over the response rows and put the information into an array of maps
+		     // We can then use this to create our buttons
+
+		     rows.forEach(function (item, index) {
+		       dbfarr[index] = {"identifier" : item.identifier};
+		  });
+			//console.log(dbfarr)
+		     if(err){
+		       console.log("We have an error:");
+		       console.log(err);
+		     }
+				 console.log(dbfarr)
+				 return callback(dbfarr);
+				 //return dbfarr[0]
 		  });
 }
 
