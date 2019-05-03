@@ -35,13 +35,19 @@ bot.on('message', function (msg) {
 			var x = 3;
 			var info = '';
 			var abilityinfo = '';
+			var abilities = '';
 			pokemongeninfo(msg, pokemon, function(result){
 				info = result;
 				pokemonabilitiesinfo(msg, info, info.id, function(result){
 					var abilityinfo = result
 					geteachability(msg, info, abilityinfo, function(result){
-						console.log(result)
-						sendpokemon(msg, info, result);
+						abilities = result
+						//console.log(result)
+						//sendpokemon(msg, info, result);
+						pokemonstatinfo(msg, info, abilities, function(result){
+							console.log(result)
+							sendpokemon(msg, info, abilities, result);
+						})
 					})
 					//result.forEach(function(item, index){
 					//abilityarr[index] = getabilities(item.ability_id);
@@ -127,6 +133,27 @@ function pokemongeninfo(msg, pokemon, callback){
 		console.log(err);
 	}
 	return callback(dbfarr[0])
+});
+}
+
+function pokemonstatinfo(msg, info, abilities, callback){
+	var sql = 'SELECT * FROM pokemon_stats where pokemon_id = ?';
+	connection.query(sql, info.id,function(err,rows,fields){
+		var dbfarr = new Array(rows.length);
+		// Loop over the response rows and put the information into an array of maps
+		// We can then use this to create our buttons
+
+		rows.forEach(function (item, index) {
+			dbfarr[index] = {"base_stat" : item.base_stat,
+			"identifier" : item.identifier
+		};
+	});
+	//console.log(dbfarr[0])
+	if(err){
+		console.log("We have an error:");
+		console.log(err);
+	}
+	return callback(dbfarr)
 });
 }
 
@@ -224,23 +251,22 @@ connection.query(sql, id, function(err,rows,fields){
 });
 }
 
-function sendpokemon(msg, pokemon, abilities){
+function sendpokemon(msg, pokemon, abilities, stats){
 	console.log(pokemon)
 	var embedmsg = new Discord.RichEmbed()
 	.setTitle(pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1))
 	.setImage("http://play.pokemonshowdown.com/sprites/xyani/" + pokemon.name + ".gif")
-	.addField("Abilities:\n" + abilitiesstr(abilities))
+	.addField("Abilities:", abilitiesstr(abilities), true)
+	.addField("Stats:", statsstr(stats), true)
 
 	msg.channel.send(embedmsg)
 }
 
 function sendmoves(msg, pokemon, moves){
 	console.log(pokemon)
-	var embedmsg = new Discord.RichEmbed()
-	.setTitle(pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1))
-	.addField(abilitiesstr(moves))
+	var movesmsg = abilitiesstr(moves)
 
-	msg.channel.send(embedmsg)
+	msg.channel.send(movesmsg)
 }
 
 function abilitiesstr(arr){
@@ -251,4 +277,14 @@ function abilitiesstr(arr){
 	console.log(abilities)
 	console.log(arr)
 	return abilities;
+}
+
+function statsstr(arr){
+	var stats = ''
+	arr.forEach(function(item, index){
+		stats = stats + item.identifier + ': ' + item.base_stat + "\n";
+	})
+	console.log(stats)
+	console.log(arr)
+	return stats;
 }
