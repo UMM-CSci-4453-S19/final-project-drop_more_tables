@@ -55,11 +55,45 @@ bot.on('message', function (msg) {
 				})
 			})
 		}
+
+		if (args[0] === "moves" && args[1]) {
+			//msg.channel.send("http://play.pokemonshowdown.com/sprites/xyani/" + args[1] + ".gif")
+			//check404(msg, args[1]);
+			var pokemon = args[1];
+			var x = 3;
+			var info = '';
+			var abilityinfo = '';
+			pokemongeninfo(msg, pokemon, function(result){
+				info = result;
+				moves(msg, info, function(result){
+					sendmoves(msg, info, result)
+				})
+			})
+		}
 		if (args[0] === "shiny" && args[1]){
 			msg.channel.send("http://play.pokemonshowdown.com/sprites/xyani-shiny/" + args[1] + ".gif")
 		}
 	}
 })
+
+function moves(msg, info, callback) {
+	var sql = 'SELECT distinct identifier from new_moves where pokemon_id = ?';
+	connection.query(sql, info.id, function(err,rows,fields){
+		var dbfarr = new Array(rows.length);
+		// Loop over the response rows and put the information into an array of maps
+		// We can then use this to create our buttons
+
+		rows.forEach(function (item, index) {
+			dbfarr[index] = {"identifier" : item.identifier};
+	});
+	//console.log(dbfarr[0])
+	if(err){
+		console.log("We have an error:");
+		console.log(err);
+	}
+	return callback(dbfarr)
+});
+}
 
 function check404(msg, pokemon){
 	const options = {
@@ -196,6 +230,15 @@ function sendpokemon(msg, pokemon, abilities){
 	.setTitle(pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1))
 	.setImage("http://play.pokemonshowdown.com/sprites/xyani/" + pokemon.name + ".gif")
 	.addField("Abilities:\n" + abilitiesstr(abilities))
+
+	msg.channel.send(embedmsg)
+}
+
+function sendmoves(msg, pokemon, moves){
+	console.log(pokemon)
+	var embedmsg = new Discord.RichEmbed()
+	.setTitle(pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1))
+	.addField(abilitiesstr(moves))
 
 	msg.channel.send(embedmsg)
 }
