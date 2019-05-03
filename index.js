@@ -36,6 +36,7 @@ bot.on('message', function (msg) {
 			var info = '';
 			var abilityinfo = '';
 			var abilities = '';
+			var stats = '';
 			pokemongeninfo(msg, pokemon, function(result){
 				info = result;
 				pokemonabilitiesinfo(msg, info, info.id, function(result){
@@ -45,8 +46,10 @@ bot.on('message', function (msg) {
 						//console.log(result)
 						//sendpokemon(msg, info, result);
 						pokemonstatinfo(msg, info, abilities, function(result){
-							console.log(result)
-							sendpokemon(msg, info, abilities, result);
+							stats = result
+							pokemontypeinfo(msg, info, abilities, stats, function(result){
+								sendpokemon(msg, info, abilities, stats, result);
+							})
 						})
 					})
 					//result.forEach(function(item, index){
@@ -157,6 +160,25 @@ function pokemonstatinfo(msg, info, abilities, callback){
 });
 }
 
+function pokemontypeinfo(msg, info, abilities, stats, callback){
+	var sql = 'SELECT * FROM pokemon_types where pokemon_id = ?';
+	connection.query(sql, info.id,function(err,rows,fields){
+		var dbfarr = new Array(rows.length);
+		// Loop over the response rows and put the information into an array of maps
+		// We can then use this to create our buttons
+
+		rows.forEach(function (item, index) {
+			dbfarr[index] = {"identifier" : item.type}
+	});
+	//console.log(dbfarr[0])
+	if(err){
+		console.log("We have an error:");
+		console.log(err);
+	}
+	return callback(dbfarr)
+});
+}
+
 function pokemonabilitiesinfo(msg, info, id, callback){
 	var sql = 'SELECT * FROM pokemon_abilities where pokemon_id = ?';
 	connection.query(sql, id,function(err,rows,fields){
@@ -251,13 +273,14 @@ connection.query(sql, id, function(err,rows,fields){
 });
 }
 
-function sendpokemon(msg, pokemon, abilities, stats){
+function sendpokemon(msg, pokemon, abilities, stats, types){
 	console.log(pokemon)
 	var embedmsg = new Discord.RichEmbed()
 	.setTitle(pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1))
 	.setImage("http://play.pokemonshowdown.com/sprites/xyani/" + pokemon.name + ".gif")
-	.addField("Abilities:", abilitiesstr(abilities), true)
 	.addField("Stats:", statsstr(stats), true)
+	.addField("Abilities:", abilitiesstr(abilities), true)
+	.addField("Types:", abilitiesstr(types), true)
 
 	msg.channel.send(embedmsg)
 }
