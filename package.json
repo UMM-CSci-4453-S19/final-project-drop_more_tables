@@ -9,7 +9,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "async": "^2.6.2",
+    "bluebird": "^3.5.4",
     "discord.js": "^11.4.2",
-    "mysql": "^2.16.0"
+    "mysql": "^2.17.1",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4"
   }
 }
