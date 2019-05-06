@@ -130,6 +130,7 @@ function moves(msg, info, callback) {
 		//console.log(dbfarr[0])
 		if (err) {
 			console.log("We have an error:");
+			console.log(sql);
 			console.log(err);
 		}
 		return callback(dbfarr)
@@ -146,6 +147,7 @@ function allMoves(msg, info, callback) {
 		});
 		if (err) {
 			console.log("We have an error:");
+			console.log(sql);
 			console.log(err);
 		}
 		return callback(dbfarr);
@@ -167,6 +169,7 @@ function limitedMoves(msg, info, count, callback) {
 		});
 		if (err) {
 			console.log("We have an error:");
+			console.log(sql);
 			console.log(err);
 		}
 		return callback(dbfarr);
