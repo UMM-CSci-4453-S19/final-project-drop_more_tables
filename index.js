@@ -158,6 +158,10 @@ function limitedMoves(msg, info, count, callback) {
 	var sql = 'SELECT DISTINCT identifier FROM new_moves WHERE pokemon_id=? LIMIT ?';
 	var insertedValues = [info, count];
 
+	console.log("The query and values we're submitting");
+	console.log(sql);
+	console.log(insertedValues);
+
 	connection.query(sql, insertedValues, function (err, rows, field) {
 		console.log(err);
 		console.log(rows);
