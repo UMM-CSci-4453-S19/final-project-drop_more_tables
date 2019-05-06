@@ -88,10 +88,18 @@ bot.on('message', function (msg) {
 				var x = 3;
 				var info = '';
 				var abilityinfo = '';
+				/*
 				pokemongeninfo(msg, pokemon, function (result) {
 					info = result;
 					limitedMoves(msg, info, 10, function (result) {
 						sendmoves(msg, info, result)
+					})
+				})
+				*/
+				pokemongeninfo(msg, pokemon, function (result) {
+					info = result;
+					moves(msg, info, function (result) {
+						sendmoves(msg, info, result);
 					})
 				})
 			}
