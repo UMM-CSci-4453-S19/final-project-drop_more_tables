@@ -63,6 +63,7 @@ bot.on('message', function (msg) {
 
 		if (args[0] === "moves" && args[1]) {
 			if (args[2] && args[2].toLowerCase() == "all") {
+				console.log("Got into the all statement");
 				var info = '';
 				pokemongeninfo(msg, pokemon, function (result) {
 					info = result;
@@ -71,6 +72,7 @@ bot.on('message', function (msg) {
 					});
 				});
 			} else if (args[2] && isNumeric(args[2])) {
+				console.log("Got into the specified limit area");
 				var info = '';
 				pokemongeninfo(msg, pokemon, function (result) {
 					info = result;
@@ -79,6 +81,7 @@ bot.on('message', function (msg) {
 					})
 				})
 			} else {
+				console.log("made it to the else");
 				//msg.channel.send("http://play.pokemonshowdown.com/sprites/xyani/" + args[1] + ".gif")
 				//check404(msg, args[1]);
 				var pokemon = args[1];
