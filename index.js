@@ -29,9 +29,16 @@ bot.on('message', function (msg) {
 		const args = msgcon.slice(prefix.length).trim().split(/ +/g)
 		console.log(args)
 		if (args[0] === "pokemon" && args[1]) {
-			//msg.channel.send("http://play.pokemonshowdown.com/sprites/xyani/" + args[1] + ".gif")
-			//check404(msg, args[1]);
 			var pokemon = args[1];
+			if(pokemon == "alolan" || pokemon == "alola" && args[2]){
+				pokemon = args[2] + "-alola"
+			} else if(pokemon == "deoxys"){
+				pokemon = args[1] + "-attack"
+			} else if (pokemon == "deoxys" && args[2]) {
+				pokemon = args[1] + "-" + args[2]
+			} else if (pokemon == "mega" && args[2]){
+				pokemon = args[2] + "-mega" 
+			}
 			var x = 3;
 			var info = '';
 			var abilityinfo = '';
@@ -43,8 +50,6 @@ bot.on('message', function (msg) {
 					var abilityinfo = result
 					geteachability(msg, info, abilityinfo, function(result){
 						abilities = result
-						//console.log(result)
-						//sendpokemon(msg, info, result);
 						pokemonstatinfo(msg, info, abilities, function(result){
 							stats = result
 							pokemontypeinfo(msg, info, abilities, stats, function(result){
@@ -52,15 +57,6 @@ bot.on('message', function (msg) {
 							})
 						})
 					})
-					//result.forEach(function(item, index){
-					//abilityarr[index] = getabilities(item.ability_id);
-					//})
-					//var abilities = processabilities(abilityarr)
-					//console.log(abilities)
-					//console.log(abilityarr);
-					//console.log(abilityarr[0]);
-					//console.log(abilityarr[1]);
-					//sendpokemon(msg, info);
 				})
 			})
 		}
