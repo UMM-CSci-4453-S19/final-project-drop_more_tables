@@ -88,20 +88,23 @@ bot.on('message', function (msg) {
 				var x = 3;
 				var info = '';
 				var abilityinfo = '';
-				/*
+
 				pokemongeninfo(msg, pokemon, function (result) {
 					info = result;
+					console.log("The info");
+					console.log(info);
 					limitedMoves(msg, info, 10, function (result) {
 						sendmoves(msg, info, result)
 					})
 				})
-				*/
+				/*
 				pokemongeninfo(msg, pokemon, function (result) {
 					info = result;
 					moves(msg, info, function (result) {
 						sendmoves(msg, info, result);
 					})
 				})
+				*/
 			}
 		}
 		if (args[0] === "shiny" && args[1]) {
