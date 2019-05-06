@@ -146,6 +146,9 @@ function limitedMoves(msg, info, count, callback) {
 	var insertedValues = [info, count];
 
 	connection.query(sql, insertedValues, function (err, rows, field) {
+		console.log(err);
+		console.log(rows);
+		console.log(field);
 		var dbfarr = new Array(rows.length);
 
 		rows.forEach(function (item, index) {
