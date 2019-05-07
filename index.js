@@ -523,9 +523,9 @@ function sendpokemon(msg, pokemon, abilities, stats, types, shiny, strong, weak)
 	.setImage(link)
 	.addField("Stats:", statsstr(stats), true)
 	.addField("Abilities:", abilitiesstr(abilities), true)
-	.addField("Types:", abilitiesstr(types), true)
-	.addField("Weak Against:", weakagain(weak, types), true)
-	.addField("Super Effective:", effectagain(strong, types), true)
+	.addField("Types:", typesstr(types), true)
+	.addField("Weak Against:", typesstr(weakagain(weak, types)), true)
+	.addField("Super Effective:", typesstr(effectagain(strong, types)), true)
 	//.addField("Test:", "<:ghost:575145110052929536>", true)
 
 	msg.channel.send(embedmsg)
@@ -542,12 +542,21 @@ function abilitiesstr(arr) {
 	var abilities = ''
 
 	arr.forEach(function (item, index) {
-		tempability = item.identifier.replace("-", " ")
+		var tempability = item.replace("-", " ")
 		abilities = abilities + tempability.charAt(0).toUpperCase() + tempability.slice(1) + '\n';
 	})
 	console.log(abilities)
 	console.log(arr)
 	return abilities;
+}
+
+function typesstr(arr) {
+	var type = ''
+	arr.forEach(function (item, index) {
+		type = type + emotes[item] + " " + item.charAt(0).toUpperCase() + item.slice(1) + "\n";
+	})
+	console.log(arr)
+	return type;
 }
 
 function statsstr(arr) {
@@ -566,15 +575,13 @@ function weakagain(arr, types) {
 	if (types.length == 2 && types[1] != null) {
 		_.each(arr, function (val, key) {
 			if (val > 200) {
-				keys.push(key.charAt(0).toUpperCase() + key.slice(1));
-				console.log(key)
+				keys.push(key);
 			}
 		});
 	} else {
 		_.each(arr, function (val, key) {
 			if (val > 100) {
-				keys.push(key.charAt(0).toUpperCase() + key.slice(1));
-				console.log(key)
+				keys.push(key);
 			}
 		});
 	}
@@ -588,14 +595,14 @@ function effectagain(arr, types) {
 	if (types.length == 2 && types[1] != null) {
 		_.each(arr, function (val, key) {
 			if (val > 200) {
-				keys.push(key.charAt(0).toUpperCase() + key.slice(1));
+				keys.push(key);
 				console.log(key)
 			}
 		});
 	} else {
 		_.each(arr, function (val, key) {
 			if (val > 100) {
-				keys.push(key.charAt(0).toUpperCase() + key.slice(1));
+				keys.push(key);
 				console.log(key)
 			}
 		});
