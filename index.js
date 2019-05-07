@@ -200,9 +200,13 @@ bot.on('message', function (msg) {
 			var specialdefense = parseInt(args[8]).toString()
 			var speed = parseInt(args[9]).toString()
 			var type = args[10]
+			var img = ''
+			if(args[11] && !args[11].includes('delimiter') && !args[11].includes(';')){
+				img = args[11]
+			}
 			if(health && attack && specialattack && defense && specialdefense && speed){
-				var sql = "call CustomPokemonInsert(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-				var inputs = [uid, name, abilities, health, attack, specialattack, defense, specialdefense, speed, type]
+				var sql = "call CustomPokemonInsert(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+				var inputs = [uid, name, abilities, health, attack, specialattack, defense, specialdefense, speed, type, img]
 				sql = mysql.format(sql, inputs);
 				console.log(sql)
 				connection.query(sql,(function(msg){return function (err, rows, fields) {
@@ -258,7 +262,52 @@ bot.on('message', function (msg) {
              		msg.channel.send("**Your Pokemon:**\n" + dbfarr)
             	}
 			}})(msg))
-		} else if (args[0] === "custom" && args[1] == "delete") {
+		} else if (args[0] === "custom" && args[1] == "all") {
+			msg.channel.send("Invalid input")
+		}
+
+		if (args[0] === "custom" && args[2] && args[1] == "view" && !args[2].includes("delimiter") && !args[2].includes(";")) {
+			var uid = "user_" + msg.member.id.toString();
+			var name = args[2]
+			var sql = "Select * from ?? where names = ?"
+			var inputs = [uid, name]
+			sql = mysql.format(sql, inputs);
+			console.log(sql)
+			connection.query(sql,(function(msg){return function (err, rows, fields) {
+				if(err){console.log("We have an selection error:");
+             			console.log(err);
+             			msg.channel.send("Failed to gather pokemon.")
+             	} else {
+             		var row = rows[0]
+             		if(row){
+             			console.log(rows[0])
+             			var stats = "Hp: " + row.health + "\n"
+             			stats = stats + "Attack: " + row.atk + "\n"
+             			stats = stats + "Special-attack: " + row.specialatk + "\n"
+             			stats = stats + "Defense: " + row.def + "\n"
+             			stats = stats + "Special-defense: " + row.specialdef + "\n"
+             			stats = stats + "Speed: " + row.spd + "\n"
+             			var img = row.image
+             			var color
+ 					    if (msg.member.colorRole != null) {
+  					    	color = msg.member.displayColor
+ 					    } else {
+  					    	color = Math.floor(Math.random() * 16777214) + 1
+ 					    }
+             			var embedmsg = new Discord.RichEmbed()
+										.setTitle(row.names.charAt(0).toUpperCase() + row.names.slice(1))
+										.addField("Stats:", stats, true)
+										.addField("Ability:", row.abilities, true)
+										.addField("Type:", row.types, true)
+										.setImage(img)
+										.setColor(color)
+             			msg.channel.send(embedmsg)
+             		} else {
+             			msg.channel.send("Invalid Pokemon.")
+             		}
+            	}
+			}})(msg))
+		} else if (args[0] === "custom" && args[1] == "view") {
 			msg.channel.send("Invalid input")
 		}
 	}
@@ -605,6 +654,7 @@ function sendpokemon(msg, pokemon, abilities, stats, types, shiny, strong, weak)
 	} else {
 		newname = tempname
 	}
+	var color = Math.floor(Math.random() * 16777214) + 1
 	var embedmsg = new Discord.RichEmbed()
 	.setTitle(newname.charAt(0).toUpperCase() + newname.slice(1))
 	.setImage(link)
@@ -613,6 +663,7 @@ function sendpokemon(msg, pokemon, abilities, stats, types, shiny, strong, weak)
 	.addField("Types:", typesstr(types), true)
 	.addField("Weak Against:", weakorstrprocess(weakagain(weak, types, tempname, abilities)), true)
 	.addField("Resistant Against:", weakorstrprocess(resagainst(weak, types, tempname, abilities)), true)
+	.setColor(color)
 	var immune = immuneagain(weak, types, abilities)
 	if(immune.length > 0){
 		embedmsg = embedmsg.addField("Immune Against:", weakorstrprocess(immune), true)
