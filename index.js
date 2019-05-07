@@ -27,6 +27,8 @@ var emotes = {
 	"poison" : "<:poison:575152705786478593>"
 }
 
+var antiinject = []
+
 credentials.database = "create_tables"
 credentials.host = 'ids.morris.umn.edu'; //setup database credentials
 
@@ -42,6 +44,9 @@ bot.login(credentials.botid)
 bot.on('ready', function () {
 	console.log('The bot is online!')
 	bot.user.setActivity(`playing pokemon in ${bot.guilds.size} servers`)
+	allPokemon(function(result){
+		antiinject = result
+	})
 })
 
 bot.on('message', function (msg) {
@@ -138,31 +143,32 @@ function pokemoninfo(msg, pokemon, shiny) {
 	var stats = '';
 	var types = '';
 	var eff = '';
-	pokemongeninfo(msg, pokemon, function (result) {
-		info = result;
-		pokemonabilitiesinfo(msg, info, info.id, function (result) {
-			var abilityinfo = result
-			geteachability(msg, info, abilityinfo, function (result) {
-				abilities = result
-				pokemonstatinfo(msg, info, abilities, function (result) {
-					stats = result
-					pokemontypeinfo(msg, info, abilities, stats, function (result) {
-						types = result
-						//sendpokemon(msg, info, abilities, stats, result, shiny);
-						effagain(msg, info, abilities, stats, types, shiny, function (result) {
-							//console.log(result)
-							eff = result
-							console.log(result)
-							resagain(msg, info, abilities, stats, types, shiny, eff, function (result) {
+	if (antiinject[pokemon]){
+		pokemongeninfo(msg, pokemon, function (result) {
+			info = result;
+			pokemonabilitiesinfo(msg, info, info.id, function (result) {
+				var abilityinfo = result
+				geteachability(msg, info, abilityinfo, function (result) {
+					abilities = result
+					pokemonstatinfo(msg, info, abilities, function (result) {
+						stats = result
+						pokemontypeinfo(msg, info, abilities, stats, function (result) {
+							types = result
+							//sendpokemon(msg, info, abilities, stats, result, shiny);
+							effagain(msg, info, abilities, stats, types, shiny, function (result) {
+								//console.log(result)
+								eff = result
 								console.log(result)
-								sendpokemon(msg, info, abilities, stats, types, shiny, eff, result);
+								resagain(msg, info, abilities, stats, types, shiny, eff, function (result) {
+									console.log(result)
+									sendpokemon(msg, info, abilities, stats, types, shiny, eff, result);
 							})
 						})
 					})
 				})
 			})
 		})
-	})
+	})}
 }
 
 function effagain(msg, info, abilities, stats, types, shiny, callback) {
@@ -316,6 +322,25 @@ function allMoves(msg, info, callback) {
 	});
 }
 
+function allPokemon(callback) {
+	var sql = 'SELECT id, stat_identifier from pokemon';
+	connection.query(sql, function (err, rows, fields) {
+		var dbfarr = new Array(rows.length);
+		// Loop over the response rows and put the information into an array of maps
+		// We can then use this to create our buttons
+
+		rows.forEach(function (item, index) {
+			dbfarr[item.stat_identifier] = item.id;
+		});
+		if (err) {
+			console.log("We have an error:");
+			console.log(sql);
+			console.log(err);
+		}
+		return callback(dbfarr)
+	});
+}
+
 function limitedMoves(msg, info, count, callback) {
 	var sql = 'SELECT DISTINCT identifier FROM new_moves WHERE pokemon_id=? ORDER BY RAND() LIMIT ?';
 	var insertedValues = [info.id, count];
@@ -350,26 +375,9 @@ function check404(msg, pokemon) {
 }
 
 function pokemongeninfo(msg, pokemon, callback) {
-	var sql = 'SELECT * FROM pokemon where stat_identifier = ?';
-	connection.query(sql, pokemon, function (err, rows, fields) {
-		var dbfarr = new Array(rows.length);
-		// Loop over the response rows and put the information into an array of maps
-		// We can then use this to create our buttons
-
-		rows.forEach(function (item, index) {
-			dbfarr[index] = {
-				"name": item.stat_identifier,
-				"species_id": item.species_id,
-				"id": item.id
-			};
-		});
-		//console.log(dbfarr[0])
-		if (err) {
-			console.log("We have an error:");
-			console.log(err);
-		}
-		return callback(dbfarr[0])
-	});
+	var pokemoninfo = {"name": pokemon,
+								 	 	 "id": antiinject[pokemon]}
+	return callback(pokemoninfo)
 }
 
 function pokemonstatinfo(msg, info, abilities, callback) {
