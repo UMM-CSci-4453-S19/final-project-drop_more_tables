@@ -63,7 +63,6 @@ bot.on('message', function (msg) {
 
 		if (args[0] === "moves" && args[1]) {
 			if (args[2] && args[2].toLowerCase() == "all") {
-				console.log("Got into the all statement");
 				var info = '';
 				pokemon = args[1];
 				pokemongeninfo(msg, pokemon, function (result) {
@@ -74,7 +73,6 @@ bot.on('message', function (msg) {
 				});
 			} else if (args[2] && isNumeric(args[2])) {
 				pokemon = args[1];
-				console.log("Got into the specified limit area");
 				var info = '';
 				pokemongeninfo(msg, pokemon, function (result) {
 					info = result;
@@ -83,9 +81,6 @@ bot.on('message', function (msg) {
 					})
 				})
 			} else {
-				console.log("made it to the else");
-				//msg.channel.send("http://play.pokemonshowdown.com/sprites/xyani/" + args[1] + ".gif")
-				//check404(msg, args[1]);
 				var pokemon = args[1];
 				var x = 3;
 				var info = '';
@@ -110,7 +105,6 @@ function isNumeric(n) {
 }
 
 function allMoves(msg, info, callback) {
-	console.log("Got into all moves");
 	var sql = 'SELECT distinct identifier from new_moves where pokemon_id = ?';
 	connection.query(sql, info.id, function (err, rows, fields) {
 		var dbfarr = new Array(rows.length);
@@ -120,7 +114,6 @@ function allMoves(msg, info, callback) {
 		rows.forEach(function (item, index) {
 			dbfarr[index] = { "identifier": item.identifier };
 		});
-		//console.log(dbfarr[0])
 		if (err) {
 			console.log("We have an error:");
 			console.log(sql);
@@ -130,37 +123,11 @@ function allMoves(msg, info, callback) {
 	});
 }
 
-/*
-function allMoves(msg, info, callback) {
-	var sql = 'SELECT DISTINCT identifier FROM new_moves WHERE pokemon_id=?';
-	connection.query(sql, info.id, function (err, rows, field) {
-		var dbfarr = new Array(rows.length);
-
-		rows.forEach(function (item, index) {
-			dbfarr[index] = { "identifier": item.identifier };
-		});
-		if (err) {
-			console.log("We have an error:");
-			console.log(sql);
-			console.log(err);
-		}
-		return callback(dbfarr);
-	})
-}
-*/
-
 function limitedMoves(msg, info, count, callback) {
 	var sql = 'SELECT DISTINCT identifier FROM new_moves WHERE pokemon_id=? LIMIT ?';
 	var insertedValues = [info.id, count];
 
-	console.log("The query and values we're submitting");
-	console.log(sql);
-	console.log(insertedValues);
-
 	connection.query(sql, insertedValues, function (err, rows, field) {
-		console.log(err);
-		console.log(rows);
-		console.log(field);
 		var dbfarr = new Array(rows.length);
 
 		rows.forEach(function (item, index) {
@@ -171,7 +138,7 @@ function limitedMoves(msg, info, count, callback) {
 			console.log(sql);
 			console.log(err);
 		}
-		console.log("Calling the callback");
+
 		return callback(dbfarr);
 	})
 }
@@ -203,9 +170,9 @@ function pokemongeninfo(msg, pokemon, callback) {
 				"id": item.id
 			};
 		});
-		//console.log(dbfarr[0])
 		if (err) {
 			console.log("We have an error:");
+			console.log(sql);
 			console.log(err);
 		}
 		return callback(dbfarr[0])
@@ -225,9 +192,9 @@ function pokemonstatinfo(msg, info, abilities, callback) {
 				"identifier": item.identifier
 			};
 		});
-		//console.log(dbfarr[0])
 		if (err) {
 			console.log("We have an error:");
+			console.log(sql);
 			console.log(err);
 		}
 		return callback(dbfarr)
@@ -244,9 +211,9 @@ function pokemontypeinfo(msg, info, abilities, stats, callback) {
 		rows.forEach(function (item, index) {
 			dbfarr[index] = { "identifier": item.type }
 		});
-		//console.log(dbfarr[0])
 		if (err) {
 			console.log("We have an error:");
+			console.log(sql);
 			console.log(err);
 		}
 		return callback(dbfarr)
@@ -263,9 +230,9 @@ function pokemonabilitiesinfo(msg, info, id, callback) {
 		rows.forEach(function (item, index) {
 			dbfarr[index] = item.ability_id
 		});
-		//console.log(dbfarr)
 		if (err) {
 			console.log("We have an error:");
+			console.log(sql);
 			console.log(err); callback
 		}
 		return callback(dbfarr)
@@ -294,22 +261,7 @@ if(itemsProcessed === abilityarr.length){return callback(abilities)}
 
 function geteachability(msg, info, abilityarr, callback) {
 	var abilities = new Array(abilityarr.length)
-	/*abilityarr.forEach(function(item, index){
-	console.log(item.ability_id)
-	/*getabilities(item.ability_id, index, function(result){
-	//console.log("Hello")
-	abilities[index] = result
-	//console.log(index)
-	//console.log(result)
-	//console.log(abilities[index])
-	console.log(abilities)
-})
-abilities[index] = getabilities(item.ability_id);
-var i = getabilities(item.ability_id);
-console.log(i)
-console.log(getabilities(item.ability_id))
-})
-console.log(abilities)*/
+
 	getabilities(abilities, abilityarr, function (result) {
 		return callback(result);
 	})
@@ -326,9 +278,7 @@ function getabilities(abilities, id, callback) {
 	}
 
 	console.log(id)
-	//console.log(id)
 	connection.query(sql, id, function (err, rows, fields) {
-		//console.log(sql)
 		var dbfarr = new Array(rows.length);
 		// Loop over the response rows and put the information into an array of maps
 		// We can then use this to create our buttons
@@ -336,14 +286,13 @@ function getabilities(abilities, id, callback) {
 		rows.forEach(function (item, index) {
 			dbfarr[index] = { "identifier": item.identifier };
 		});
-		//console.log(dbfarr)
 		if (err) {
 			console.log("We have an error:");
+			console.log(sql);
 			console.log(err);
 		}
 		console.log(dbfarr)
 		return callback(dbfarr);
-		//return dbfarr[0]
 	});
 }
 
