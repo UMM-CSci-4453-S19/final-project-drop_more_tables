@@ -45,7 +45,8 @@ var specialpokemon = {
 	"shaymin-land" : "shaymin",
 	"giratina-altered" : "giratina",
 	"wormadam-plant" : "wormadam",
-	"deoxys-normal" : "deoxys"
+	"deoxys-normal" : "deoxys",
+	"nidoran-m" : "nidoran"
 }
 
 var specialabilities = {
@@ -223,6 +224,8 @@ function processpokemon(pokemon){
 		processpoke = pokemon + "-altered"
 	} else if (pokemon == "wormadam") {
 		processpoke = pokemon + "-plant"
+	} else if (pokemon == "nidoran") {
+		processpoke = pokemon + "-m"
 	} else {
 		processpoke = pokemon
 	}
