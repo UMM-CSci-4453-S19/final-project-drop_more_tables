@@ -158,7 +158,7 @@ function pokemoninfo(msg, pokemon, shiny) {
 							effagain(msg, info, abilities, stats, types, shiny, function (result) {
 								//console.log(result)
 								eff = result
-								console.log(result)
+								//console.log(result)
 								resagain(msg, info, abilities, stats, types, shiny, eff, function (result) {
 									console.log(result)
 									sendpokemon(msg, info, abilities, stats, types, shiny, eff, result);
@@ -223,44 +223,7 @@ function resagain(msg, info, abilities, stats, types, shiny, eff, callback) {
 		var sql = 'SELECT * FROM type_efficacy where target_type = ? or target_type = ?';
 	} else if (types.length = 1) {
 		var sql = 'SELECT * FROM type_efficacy where target_type = ?';
-		if (args[0] === "moves" && args[1]) {
-			if (args[2] && args[2].toLowerCase() == "all") {
-				var info = '';
-				pokemon = args[1];
-				pokemongeninfo(msg, pokemon, function (result) {
-					info = result;
-					allMoves(msg, info, function (result) {
-						sendmoves(msg, info, result);
-					});
-				});
-			} else if (args[2] && isNumeric(args[2])) {
-				pokemon = args[1];
-				var info = '';
-				pokemongeninfo(msg, pokemon, function (result) {
-					info = result;
-					limitedMoves(msg, info, parseInt(args[2]), function (result) {
-						sendmoves(msg, info, result);
-					})
-				})
-			} else {
-				var pokemon = args[1];
-				var x = 3;
-				var info = '';
-				var abilityinfo = '';
-
-				pokemongeninfo(msg, pokemon, function (result) {
-					info = result;
-					limitedMoves(msg, info, 10, function (result) {
-						sendmoves(msg, info, result);
-					})
-				})
-			}
-		}
-		if (args[0] === "shiny" && args[1]) {
-			msg.channel.send("http://play.pokemonshowdown.com/sprites/xyani-shiny/" + args[1] + ".gif")
-		}
 	}
-
 	connection.query(sql, types, function (err, rows, fields) {
 		var dbfarr = {
 			"normal": 0,
@@ -311,7 +274,7 @@ function allMoves(msg, info, callback) {
 		// We can then use this to create our buttons
 
 		rows.forEach(function (item, index) {
-			dbfarr[index] = { "identifier": item.identifier };
+			dbfarr[index] = item.identifier;
 		});
 		if (err) {
 			console.log("We have an error:");
@@ -349,7 +312,7 @@ function limitedMoves(msg, info, count, callback) {
 		var dbfarr = new Array(rows.length);
 
 		rows.forEach(function (item, index) {
-			dbfarr[index] = { "identifier": item.identifier };
+			dbfarr[index] = item.identifier
 		});
 		if (err) {
 			console.log("We have an error:");
@@ -541,6 +504,7 @@ function sendpokemon(msg, pokemon, abilities, stats, types, shiny, strong, weak)
 
 function sendmoves(msg, pokemon, moves) {
 	console.log(pokemon)
+	console.log(moves)
 	var movesmsg = abilitiesstr(moves)
 
 	msg.channel.send(movesmsg)
@@ -582,7 +546,7 @@ function weakagain(arr, types) {
 	console.log("types is " + types.length + " long")
 	if (types.length == 2 && types[1] != null) {
 		_.each(arr, function (val, key) {
-			if (val > 200) {
+			if (val > 250) {
 				keys.push(key);
 			}
 		});
