@@ -6,6 +6,26 @@ const rp = require('request-promise')
 port = process.env.PORT || 1337;
 var async = require("async");
 //const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
+var emotes = {
+	"water" : "<:water:575145110157918229>",
+	"steel" : "<:steel:575145110208118786>",
+	"rock" : "<:rock:575145110262775840>",
+	"psychic" : "<:psychic:575145110208249866>",
+	"normal" : "<:normal:575145110174433283>",
+	"ice" : "<:ice:575145110342205441>",
+	"ground" : "<:ground:575145110350725120>",
+	"grass" : "<:grass:575145109885288459>",
+	"ghost" : "<:ghost:575145110052929536>",
+	"flying" : "<:flying:575145109759459339>",
+	"fire" : "<:fire:575145109696282625>",
+	"fighting" : "<:fighting:575145109969043466>",
+	"fairy" : "<:fairy:575145109654601769>",
+	"electric" : "<:electric:575145110006923264>",
+	"dragon" : "<:dragon:575145109990015004>",
+	"bug" : "<:bug:575145109528772610>",
+	"dark" : "<:dark:575152705920827412>",
+	"poison" : "<:poison:575152705786478593>"
+}
 
 credentials.database = "create_tables"
 credentials.host = 'ids.morris.umn.edu'; //setup database credentials
@@ -153,64 +173,7 @@ function effagain(msg, info, abilities, stats, types, shiny, callback){
 
 		rows.forEach(function (item, index) {
 			var target = item.target_type
-			switch (target) {
-				case "normal":
-				dbfarr.normal = dbfarr.normal + item.damage_factor
-				break;
-				case "fighting":
-				dbfarr.fighting = dbfarr.fighting + item.damage_factor
-				break;
-				case "flying" :
-				dbfarr.flying = dbfarr.flying + item.damage_factor
-				break;
-				case "poison" :
-				dbfarr.poison = dbfarr.poison + item.damage_factor
-				break;
-				case "ground" :
-				dbfarr.ground = dbfarr.ground + item.damage_factor
-				break;
-				case "rock" :
-				dbfarr.rock = dbfarr.rock + item.damage_factor
-				break;
-				case "bug" :
-				dbfarr.bug = dbfarr.bug + item.damage_factor
-				break;
-				case "ghost" :
-				dbfarr.ghost = dbfarr.ghost + item.damage_factor
-				break;
-				case "steel" :
-				dbfarr.steel = dbfarr.steel + item.damage_factor
-				break;
-				case "fire" :
-				dbfarr.fire = dbfarr.fire + item.damage_factor
-				break;
-				case "water" :
-				dbfarr.water = dbfarr.water + item.damage_factor
-				break;
-				case "grass" :
-				dbfarr.grass = dbfarr.grass + item.damage_factor
-				break;
-				case "electric" :
-				dbfarr.electric = dbfarr.electric + item.damage_factor
-				break;
-				case "psychic" :
-				dbfarr.psychic = dbfarr.psychic + item.damage_factor
-				break;
-				case "ice" :
-				dbfarr.ice = dbfarr.ice + item.damage_factor
-				break;
-				case "dragon" :
-				dbfarr.dragon = dbfarr.dragon + item.damage_factor
-				break;
-				case "dark" :
-				dbfarr.dark = dbfarr.dark + item.damage_factor
-				break;
-				case "fairy" :
-				dbfarr.fairy = dbfarr.fairy + item.damage_factor
-				break;
-				default:
-				 	console.log("type not found")
-			}
+			dbfarr[target] = dbfarr[target] + item.damage_factor
 	});
 	//console.log(dbfarr[0])
 	if(err){
@@ -253,64 +216,7 @@ function resagain(msg, info, abilities, stats, types, shiny, eff, callback){
 
 		rows.forEach(function (item, index) {
 			var target = item.damage_type
-			switch (target) {
-				case "normal":
-				dbfarr.normal = dbfarr.normal + item.damage_factor
-				break;
-				case "fighting":
-				dbfarr.fighting = dbfarr.fighting + item.damage_factor
-				break;
-				case "flying" :
-				dbfarr.flying = dbfarr.flying + item.damage_factor
-				break;
-				case "poison" :
-				dbfarr.poison = dbfarr.poison + item.damage_factor
-				break;
-				case "ground" :
-				dbfarr.ground = dbfarr.ground + item.damage_factor
-				break;
-				case "rock" :
-				dbfarr.rock = dbfarr.rock + item.damage_factor
-				break;
-				case "bug" :
-				dbfarr.bug = dbfarr.bug + item.damage_factor
-				break;
-				case "ghost" :
-				dbfarr.ghost = dbfarr.ghost + item.damage_factor
-				break;
-				case "steel" :
-				dbfarr.steel = dbfarr.steel + item.damage_factor
-				break;
-				case "fire" :
-				dbfarr.fire = dbfarr.fire + item.damage_factor
-				break;
-				case "water" :
-				dbfarr.water = dbfarr.water + item.damage_factor
-				break;
-				case "grass" :
-				dbfarr.grass = dbfarr.grass + item.damage_factor
-				break;
-				case "electric" :
-				dbfarr.electric = dbfarr.electric + item.damage_factor
-				break;
-				case "psychic" :
-				dbfarr.psychic = dbfarr.psychic + item.damage_factor
-				break;
-				case "ice" :
-				dbfarr.ice = dbfarr.ice + item.damage_factor
-				break;
-				case "dragon" :
-				dbfarr.dragon = dbfarr.dragon + item.damage_factor
-				break;
-				case "dark" :
-				dbfarr.dark = dbfarr.dark + item.damage_factor
-				break;
-				case "fairy" :
-				dbfarr.fairy = dbfarr.fairy + item.damage_factor
-				break;
-				default:
-				 	console.log("type not found")
-			}
+			dbfarr[target] = dbfarr[target] + item.damage_factor
 	});
 	//console.log(dbfarr[0])
 	if(err){
@@ -532,6 +438,7 @@ function sendpokemon(msg, pokemon, abilities, stats, types, shiny, strong, weak)
 	.addField("Types:", abilitiesstr(types), true)
 	.addField("Weak Against:", weakagain(weak, types), true)
 	.addField("Super Effective:", effectagain(strong, types), true)
+	//.addField("Test:", "<:ghost:575145110052929536>", true)
 
 	msg.channel.send(embedmsg)
 }
