@@ -127,7 +127,11 @@ function limitedMoves(msg, info, count, callback) {
 	var sql = 'SELECT DISTINCT identifier FROM new_moves WHERE pokemon_id=? ORDER BY RAND() LIMIT ?';
 	var insertedValues = [info.id, count];
 
+	console.log(sql);
+	console.log(insertedValues);
+
 	connection.query(sql, insertedValues, function (err, rows, field) {
+		console.log(rows.length);
 		var dbfarr = new Array(rows.length);
 
 		rows.forEach(function (item, index) {
