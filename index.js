@@ -635,6 +635,7 @@ function abilitiesstr(arr) {
 	var abilities = ''
 
 	arr.forEach(function (item, index) {
+		console.log(typeof item);
 		tempability = item.replace("-", " ")
 		abilities = abilities + tempability.charAt(0).toUpperCase() + tempability.slice(1) + '\n';
 	})
