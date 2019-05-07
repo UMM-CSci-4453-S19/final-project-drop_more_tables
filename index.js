@@ -104,31 +104,38 @@ bot.on('message', function (msg) {
 		}
 
 		if (args[0] === "moves" && args[1]) {
-			if (args[2] && args[2].toLowerCase() == "all") {
-				var info = '';
-				pokemon = args[1];
-				pokemongeninfo(msg, pokemon, function (result) {
+			var pokemon = args[1];
+			if (pokemon == "alolan" || pokemon == "alola" && args[2]) {
+				pokemon = args[2] + "-alola"
+			} else if (pokemon == "tapu" && args[2]) {
+				pokemon = "tapu-" + args[2]
+			} else if(args[3]){
+				pokemon = args[2] + "-" + args[1]
+			}
+			var info = ''
+			processpoke = processpokemon(pokemon)
+			if (args[2] && args[2] == "all" || args[3] && args[3] == "all") {
+				pokemongeninfo(msg, processpoke, function (result) {
 					info = result;
 					allMoves(msg, info, function (result) {
 						sendmoves(msg, info, result);
 					});
 				});
-			} else if (args[2] && isNumeric(args[2])) {
-				pokemon = args[1];
-				var info = '';
-				pokemongeninfo(msg, pokemon, function (result) {
+			} else if (args[2] && isNumeric(args[2]) || args[3] && isNumeric(args[3])) {
+				var num = 0;
+				if(args[3]){
+					num = parseInt(args[3])
+				} else {
+					num = parseInt(args[2])
+				}
+				pokemongeninfo(msg, processpoke, function (result) {
 					info = result;
-					limitedMoves(msg, info, parseInt(args[2]), function (result) {
+					limitedMoves(msg, info, num, function (result) {
 						sendmoves(msg, info, result);
 					})
 				})
 			} else {
-				var pokemon = args[1];
-				var x = 3;
-				var info = '';
-				var abilityinfo = '';
-
-				pokemongeninfo(msg, pokemon, function (result) {
+				pokemongeninfo(msg, processpoke, function (result) {
 					info = result;
 					limitedMoves(msg, info, 10, function (result) {
 						sendmoves(msg, info, result);
@@ -152,14 +159,39 @@ bot.on('message', function (msg) {
 })
 
 function pokemoninfo(msg, pokemon, shiny) {
-	processpoke = '';
-	var x = 3;
 	var info = '';
 	var abilityinfo = '';
 	var abilities = '';
 	var stats = '';
 	var types = '';
 	var eff = '';
+	var processpoke = processpokemon(pokemon);
+	if (antiinject[processpoke]){
+		pokemongeninfo(msg, processpoke, function (result) {
+			info = result;
+			pokemonabilitiesinfo(msg, info, info.id, function (result) {
+				var abilityinfo = result
+				geteachability(msg, info, abilityinfo, function (result) {
+					abilities = result
+					pokemonstatinfo(msg, info, abilities, function (result) {
+						stats = result
+						pokemontypeinfo(msg, info, abilities, stats, function (result) {
+							types = result
+							effagain(msg, info, abilities, stats, types, shiny, function (result) {
+								eff = result
+								resagain(msg, info, abilities, stats, types, shiny, eff, function (result) {
+									sendpokemon(msg, info, abilities, stats, types, shiny, eff, result);
+							})
+						})
+					})
+				})
+			})
+		})
+	})}
+}
+
+function processpokemon(pokemon){
+	var processpoke = ''
 	if (pokemon == "thundurus" || pokemon == "landorus" || pokemon == "tornadus"){
 		processpoke = pokemon + "-incarnate" 
 	} else if (pokemon == "meloetta") {
@@ -195,28 +227,7 @@ function pokemoninfo(msg, pokemon, shiny) {
 	} else {
 		processpoke = pokemon
 	}
-	if (antiinject[processpoke]){
-		pokemongeninfo(msg, processpoke, function (result) {
-			info = result;
-			pokemonabilitiesinfo(msg, info, info.id, function (result) {
-				var abilityinfo = result
-				geteachability(msg, info, abilityinfo, function (result) {
-					abilities = result
-					pokemonstatinfo(msg, info, abilities, function (result) {
-						stats = result
-						pokemontypeinfo(msg, info, abilities, stats, function (result) {
-							types = result
-							effagain(msg, info, abilities, stats, types, shiny, function (result) {
-								eff = result
-								resagain(msg, info, abilities, stats, types, shiny, eff, function (result) {
-									sendpokemon(msg, info, abilities, stats, types, shiny, eff, result);
-							})
-						})
-					})
-				})
-			})
-		})
-	})}
+	return processpoke
 }
 
 function effagain(msg, info, abilities, stats, types, shiny, callback) {
