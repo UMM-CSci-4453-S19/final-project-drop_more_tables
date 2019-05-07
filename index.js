@@ -490,7 +490,9 @@ function sendpokemon(msg, pokemon, abilities, stats, types, shiny, strong, weak)
 	}
 	var newname = ''
 	if (tempname.includes("-")) {
-		newname = pokemon.name.replace("-", " (") + ")"
+		newname = tempname.replace("-", " (") + ")"
+	} else {
+		newname = tempname
 	}
 	var embedmsg = new Discord.RichEmbed()
 	.setTitle(newname.charAt(0).toUpperCase() + newname.slice(1))
