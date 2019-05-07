@@ -188,6 +188,56 @@ bot.on('message', function (msg) {
 			}
 			pokemoninfo(msg, pokemon, "shiny");
 		}
+
+		if (args[0] === "custom" && args[10] && args[1] == "create" && !args[2].includes('delimiter') && !args[2].includes(';') && !args[3].includes('delimiter') && !args[3].includes(';') && !args[10].includes('delimiter') && !args[10].includes(';')) {
+			var uid = "user_" + msg.member.id.toString();
+			var name = args[2]
+			var abilities = args[3]
+			var health = parseInt(args[4]).toString()
+			var attack = parseInt(args[5]).toString()
+			var specialattack = parseInt(args[6]).toString()
+			var defense = parseInt(args[7]).toString()
+			var specialdefense = parseInt(args[8]).toString()
+			var speed = parseInt(args[9]).toString()
+			var type = args[10]
+			if(health && attack && specialattack && defense && specialdefense && speed){
+				var sql = "call CustomPokemonInsert(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+				var inputs = [uid, name, abilities, health, attack, specialattack, defense, specialdefense, speed, type]
+				sql = mysql.format(sql, inputs);
+				console.log(sql)
+				connection.query(sql,(function(msg){return function (err, rows, fields) {
+					if(err){console.log("We have an insertion error:");
+             				console.log(err);
+             				msg.channel.send("Failed to add.")
+             		} else {
+             			msg.channel.send("Successfully added!")
+             		}
+				}})(msg))
+			} else {
+				msg.channel.send("Invalid input: stats must contain integers")
+			}
+		} else if (args[0] === "custom" && args[1] == "create") {
+			msg.channel.send("Invalid input")
+		}
+
+		if (args[0] === "custom" && args[2] && args[1] == "delete" && !args[2].includes("delimiter") && !args[2].includes(";")) {
+			var uid = "user_" + msg.member.id.toString();
+			var name = args[2]
+			var sql = "Delete from ?? where names = ?"
+			var inputs = [uid, name]
+			sql = mysql.format(sql, inputs);
+			console.log(sql)
+			connection.query(sql,(function(msg){return function (err, rows, fields) {
+				if(err){console.log("We have an deletion error:");
+             			console.log(err);
+             			msg.channel.send("Failed to delete.")
+             	} else {
+             		msg.channel.send("Successfully deleted!")
+            		}
+			}})(msg))
+		} else if (args[0] === "custom" && args[1] == "delete") {
+			msg.channel.send("Invalid input")
+		}
 	}
 })
 
