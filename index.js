@@ -176,6 +176,7 @@ function limitedMoves(msg, info, count, callback) {
 			console.log(sql);
 			console.log(err);
 		}
+		console.log("Calling the callback");
 		return callback(dbfarr);
 	})
 }
