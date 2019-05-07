@@ -108,6 +108,7 @@ function isNumeric(n) {
 }
 
 function allMoves(msg, info, callback) {
+	Console.log("Got into all moves");
 	var sql = 'SELECT distinct identifier from new_moves where pokemon_id = ?';
 	connection.query(sql, info.id, function (err, rows, fields) {
 		var dbfarr = new Array(rows.length);
