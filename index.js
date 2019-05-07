@@ -733,6 +733,11 @@ function weakagain(arr, types, pokemon) {
 						   "effect" : "x1.5"});
 			}
 		});
+	} else if (pokemon.includes("venusaur-mega")){
+		keys.push({"type" : "flying",
+				   "effect" : "x2"});
+		keys.push({"type" : "psychic",
+				   "effect" : "x2"});
 	} else if (pokemon.includes("necrozma") && !pokemon.includes("ultra")) {
 		_.each(arr, function (val, key) {
 			if (val > 100) {
