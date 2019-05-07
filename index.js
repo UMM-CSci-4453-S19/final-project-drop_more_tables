@@ -81,7 +81,6 @@ bot.on('message', function (msg) {
 	if (msg.content.startsWith(prefix)) {
 		msgcon = msg.content.toLowerCase()
 		const args = msgcon.slice(prefix.length).trim().split(/ +/g)
-		console.log(args)
 
 		if (args[0] === "help") {
 			var embdmsg = new Discord.RichEmbed()
@@ -197,7 +196,7 @@ function processpokemon(pokemon){
 	} else if (pokemon == "meloetta") {
 		processpoke = pokemon + "-aria" 
 	} else if (pokemon == "keldeo") {
-		processpoke = pokemon + "ordinary" 
+		processpoke = pokemon + "-ordinary" 
 	} else if (pokemon == "meowstic") {
 		processpoke = pokemon + "-male" 
 	} else if (pokemon == "aegislash") {
@@ -471,14 +470,12 @@ function getabilities(abilities, id, callback) {
 			console.log("We have an error:");
 			console.log(err);
 		}
-		console.log(dbfarr)
 		return callback(dbfarr);
 	});
 }
 
 
 function sendpokemon(msg, pokemon, abilities, stats, types, shiny, strong, weak) {
-	console.log(pokemon)
 	var link = shiny
 	var tempname = ''
 	if(specialpokemon[pokemon.name]){
@@ -513,8 +510,6 @@ function sendpokemon(msg, pokemon, abilities, stats, types, shiny, strong, weak)
 }
 
 function sendmoves(msg, pokemon, moves) {
-	console.log(pokemon)
-	console.log(moves)
 	var movesmsg = abilitiesstr(moves)
 
 	msg.channel.send(movesmsg)
