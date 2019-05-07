@@ -91,7 +91,7 @@ bot.on('message', function (msg) {
 
 				pokemongeninfo(msg, pokemon, function (result) {
 					info = result;
-					allMoves(msg, info, function (result) {
+					limitedMoves(msg, info, 10, function (result) {
 						sendmoves(msg, info, result);
 					})
 				})
