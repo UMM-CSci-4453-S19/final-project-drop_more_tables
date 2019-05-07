@@ -72,6 +72,7 @@ bot.on('message', function (msg) {
 					});
 				});
 			} else if (args[2] && isNumeric(args[2])) {
+				pokemon = args[1];
 				console.log("Got into the specified limit area");
 				var info = '';
 				pokemongeninfo(msg, pokemon, function (result) {
