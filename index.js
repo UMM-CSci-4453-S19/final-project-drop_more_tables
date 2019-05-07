@@ -117,7 +117,7 @@ function isNumeric(n) {
 	return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
-function moves(msg, info, callback) {
+function allMoves(msg, info, callback) {
 	var sql = 'SELECT distinct identifier from new_moves where pokemon_id = ?';
 	connection.query(sql, info.id, function (err, rows, fields) {
 		var dbfarr = new Array(rows.length);
@@ -137,6 +137,7 @@ function moves(msg, info, callback) {
 	});
 }
 
+/*
 function allMoves(msg, info, callback) {
 	var sql = 'SELECT DISTINCT identifier FROM new_moves WHERE pokemon_id=?';
 	connection.query(sql, info.id, function (err, rows, field) {
@@ -153,6 +154,7 @@ function allMoves(msg, info, callback) {
 		return callback(dbfarr);
 	})
 }
+*/
 
 function limitedMoves(msg, info, count, callback) {
 	var sql = 'SELECT DISTINCT identifier FROM new_moves WHERE pokemon_id=? LIMIT ?';
