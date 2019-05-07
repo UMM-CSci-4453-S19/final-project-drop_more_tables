@@ -65,14 +65,17 @@ bot.on('message', function (msg) {
 			var pokemon = args[1];
 			if (pokemon == "alolan" || pokemon == "alola" && args[2]) {
 				pokemon = args[2] + "-alola"
-
-			} else if (pokemon == "deoxys" && args[2]) {
+			} else if(args[2]){
+				pokemon = args[2] + "-" + args[1]
+			} /*else if (pokemon == "deoxys" && args[2]) {
 				pokemon = args[1] + "-" + args[2]
 			} else if (pokemon == "deoxys") {
 				pokemon = args[1] + "-normal"
 			} else if (pokemon == "mega" && args[2]) {
 				pokemon = args[2] + "-mega"
-			}
+			} else if (args[2] && args[2] == "rotom"){
+				pokemon = "rotom-" + pokemon
+			}*/
 			pokemoninfo(msg, pokemon, "");
 		}
 
@@ -525,7 +528,7 @@ function sendpokemon(msg, pokemon, abilities, stats, types, shiny, strong, weak)
 	.addField("Abilities:", abilitiesstr(abilities), true)
 	.addField("Types:", typesstr(types), true)
 	.addField("Weak Against:", typesstr(weakagain(weak, types)), true)
-	.addField("Super Effective:", typesstr(effectagain(strong, types)), true)
+	.addField("Super Effective Against:", typesstr(effectagain(strong, types)), true)
 	//.addField("Test:", "<:ghost:575145110052929536>", true)
 
 	msg.channel.send(embedmsg)
