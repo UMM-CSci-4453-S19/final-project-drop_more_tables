@@ -53,12 +53,9 @@ bot.on('message', function (msg) {
 		if (args[0] === "help") {
 			var embdmsg = new Discord.RichEmbed()
 				.setTitle("Commands")
-				.addField("Pokemon", "Get a pokemon specified by it's name, it's associated stats, and a gif of the Pokemon")
-				.addField("Syntax:", "!pd pokemon [name]")
-				.addField("Shiny:", "Same as Pokemon, but sends a gif of the shiny version")
-				.addField("Syntax:", "!pd shiny [name]")
-				.addField("Moves:", "Returns a list of the moves that a specified pokemon can learn, by default returns 10 random moves")
-				.addField("Syntax:", "!pd moves [name] [numberOfMovesToReturn/all]");
+				.addField("Pokemon", "Get a pokemon specified by it's name, it's associated stats, and a gif of the Pokemon ```!pd pokemon [name]```")
+				.addField("Shiny:", "Same as Pokemon, but sends a gif of the shiny version ```!pd shiny [name]```")
+				.addField("Moves:", 'Returns a list of the moves that a specified pokemon can learn, by default returns 10 random moves ```!pd moves [name] [number of moves or "all"]```')
 			msg.channel.send(embdmsg);
 		}
 		if (args[0] === "pokemon" && args[1]) {
