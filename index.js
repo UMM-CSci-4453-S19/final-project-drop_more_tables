@@ -238,6 +238,29 @@ bot.on('message', function (msg) {
 		} else if (args[0] === "custom" && args[1] == "delete") {
 			msg.channel.send("Invalid input")
 		}
+
+		if (args[0] === "custom" && args[1] && args[1] == "all") {
+			var uid = "user_" + msg.member.id.toString();
+			var sql = "Select names from ??"
+			var inputs = [uid]
+			sql = mysql.format(sql, inputs);
+			console.log(sql)
+			connection.query(sql,(function(msg){return function (err, rows, fields) {
+				if(err){console.log("We have an selection error:");
+             			console.log(err);
+             			msg.channel.send("Failed to gather pokemon.")
+             	} else {
+             		var dbfarr = '';
+
+					rows.forEach(function (item, index) {
+						dbfarr = dbfarr + item.names + "\n";
+					});
+             		msg.channel.send("**Your Pokemon:**\n" + dbfarr)
+            	}
+			}})(msg))
+		} else if (args[0] === "custom" && args[1] == "delete") {
+			msg.channel.send("Invalid input")
+		}
 	}
 })
 
