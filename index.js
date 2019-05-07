@@ -27,6 +27,35 @@ var emotes = {
 	"poison" : "<:poison:575152705786478593>"
 }
 
+var specialpokemon = {
+	"thundurus-incarnate" : "thundurus",
+	"landorus-incarnate" : "landorus",
+	"meloetta-aria" : "meloetta",
+	"keldeo-ordinary" : "keldeo",
+	"meowstic-male" : "meowstic",
+	"aegislash-shield" : "aegislash",
+	"pumpkaboo-average" : "pumpkaboo",
+	"gourgeist-average" : "gourgeist",
+	"oricorio-baile" : "oricorio",
+	"lycanroc-midday" : "lycanroc",
+	"wishiwashi-solo" : "wishiwashi",
+	"minior-red-meteor" : "minior",
+	"mimikyu-disguised" : "mimikyu",
+	"darmanitan-standard" : "darmanitan",
+	"basculin-red-striped" : "basculin",
+	"shaymin-land" : "shaymin",
+	"giratina-altered" : "giratina",
+	"wormadam-plant" : "wormadam",
+	"deoxys-normal" : "deoxys"
+}
+
+var specialabilities = {
+	"water-absorb" : "water",
+	"volt-absorb" : "electric",
+	"lightning-rod" : "electric",
+	"levitate" : "ground"
+}
+
 var antiinject = []
 
 credentials.database = "create_tables"
@@ -67,17 +96,11 @@ bot.on('message', function (msg) {
 			var pokemon = args[1];
 			if (pokemon == "alolan" || pokemon == "alola" && args[2]) {
 				pokemon = args[2] + "-alola"
+			} else if (pokemon == "tapu" && args[2]) {
+				pokemon = "tapu-" + args[2]
 			} else if(args[2]){
 				pokemon = args[2] + "-" + args[1]
-			} /*else if (pokemon == "deoxys" && args[2]) {
-				pokemon = args[1] + "-" + args[2]
-			} else if (pokemon == "deoxys") {
-				pokemon = args[1] + "-normal"
-			} else if (pokemon == "mega" && args[2]) {
-				pokemon = args[2] + "-mega"
-			} else if (args[2] && args[2] == "rotom"){
-				pokemon = "rotom-" + pokemon
-			}*/
+			}
 			pokemoninfo(msg, pokemon, "");
 		}
 
@@ -119,16 +142,10 @@ bot.on('message', function (msg) {
 			var pokemon = args[1];
 			if (pokemon == "alolan" || pokemon == "alola" && args[2]) {
 				pokemon = args[2] + "-alola"
-			} else if (pokemon == "deoxys") {
-				pokemon = args[1] + "-attack"
-			} else if (pokemon == "deoxys" && args[2]) {
-				pokemon = args[1] + "-" + args[2]
-			} else if (pokemon == "deoxys") {
-				pokemon = args[1] + "-normal"
-			} else if (pokemon == "mega" && args[2]) {
-				pokemon = args[2] + "-mega"
-			} else if (pokemon == "mega" && args[2]) {
-				pokemon = args[2] + "-mega"
+			} else if (pokemon == "tapu" && args[2]) {
+				pokemon = "tapu-" + args[2]
+			} else if(args[2]){
+				pokemon = args[2] + "-" + args[1]
 			}
 			pokemoninfo(msg, pokemon, "shiny");
 		}
@@ -136,6 +153,7 @@ bot.on('message', function (msg) {
 })
 
 function pokemoninfo(msg, pokemon, shiny) {
+	processpoke = '';
 	var x = 3;
 	var info = '';
 	var abilityinfo = '';
@@ -143,8 +161,43 @@ function pokemoninfo(msg, pokemon, shiny) {
 	var stats = '';
 	var types = '';
 	var eff = '';
-	if (antiinject[pokemon]){
-		pokemongeninfo(msg, pokemon, function (result) {
+	if (pokemon == "thundurus" || pokemon == "landorus" || pokemon == "tornadus"){
+		processpoke = pokemon + "-incarnate" 
+	} else if (pokemon == "meloetta") {
+		processpoke = pokemon + "-aria" 
+	} else if (pokemon == "keldeo") {
+		processpoke = pokemon + "ordinary" 
+	} else if (pokemon == "meowstic") {
+		processpoke = pokemon + "-male" 
+	} else if (pokemon == "aegislash") {
+		processpoke = pokemon + "-shield"
+	} else if (pokemon == "pumpkaboo" || pokemon == "gourgeist") {
+		processpoke = pokemon + "-average"
+	} else if (pokemon == "oricorio") {
+		processpoke = pokemon + "-baile"
+	} else if (pokemon == "lycanroc") {
+		processpoke = pokemon + "-midday"
+	} else if (pokemon == "wishiwashi") {
+		processpoke = pokemon + "-solo"
+	} else if (pokemon == "minior") {
+		processpoke = pokemon + "-red-meteor"
+	} else if (pokemon == "mimikyu") {
+		processpoke = pokemon + "-disguised"
+	} else if (pokemon == "darmanitan") {
+		processpoke = pokemon + "-standard"
+	} else if (pokemon == "basculin") {
+		processpoke = pokemon + "-red-striped"
+	} else if (pokemon == "shaymin") {
+		processpoke = pokemon + "-land"
+	} else if (pokemon == "giratina") {
+		processpoke = pokemon + "-altered"
+	} else if (pokemon == "wormadam") {
+		processpoke = pokemon + "-plant"
+	} else {
+		processpoke = pokemon
+	}
+	if (antiinject[processpoke]){
+		pokemongeninfo(msg, processpoke, function (result) {
 			info = result;
 			pokemonabilitiesinfo(msg, info, info.id, function (result) {
 				var abilityinfo = result
@@ -226,31 +279,33 @@ function resagain(msg, info, abilities, stats, types, shiny, eff, callback) {
 	}
 	connection.query(sql, types, function (err, rows, fields) {
 		var dbfarr = {
-			"normal": 0,
-			"fighting": 0,
-			"flying": 0,
-			"poison": 0,
-			"ground": 0,
-			"rock": 0,
-			"bug": 0,
-			"ghost": 0,
-			"steel": 0,
-			"fire": 0,
-			"water": 0,
-			"grass": 0,
-			"electric": 0,
-			"psychic": 0,
-			"ice": 0,
-			"dragon": 0,
-			"dark": 0,
-			"fairy": 0
+			"normal": 1,
+			"fighting": 1,
+			"flying": 1,
+			"poison": 1,
+			"ground": 1,
+			"rock": 1,
+			"bug": 1,
+			"ghost": 1,
+			"steel": 1,
+			"fire": 1,
+			"water": 1,
+			"grass": 1,
+			"electric": 1,
+			"psychic": 1,
+			"ice": 1,
+			"dragon": 1,
+			"dark": 1,
+			"fairy": 1
 		}
 		// Loop over the response rows and put the information into an array of maps
 		// We can then use this to create our buttons
 
 		rows.forEach(function (item, index) {
 			var target = item.damage_type
-			dbfarr[target] = dbfarr[target] + item.damage_factor
+			if(dbfarr[target] != 0){
+				dbfarr[target] = dbfarr[target] * item.damage_factor
+			}
 		});
 		//console.log(dbfarr[0])
 		if (err) {
@@ -476,28 +531,35 @@ function getabilities(abilities, id, callback) {
 function sendpokemon(msg, pokemon, abilities, stats, types, shiny, strong, weak) {
 	console.log(pokemon)
 	var link = shiny
-	if (link == "shiny" && pokemon.name == "deoxys-normal") {
-		link = "http://play.pokemonshowdown.com/sprites/xyani-shiny/deoxys.gif"
-	} else if (link == "shiny") {
-		link = "http://play.pokemonshowdown.com/sprites/xyani-shiny/" + pokemon.name + ".gif"
-	} else if (pokemon.name == "deoxys-normal") {
-		link = "http://play.pokemonshowdown.com/sprites/xyani/deoxys.gif"
+	var tempname = ''
+	if(specialpokemon[pokemon.name]){
+		tempname = specialpokemon[pokemon.name]
 	} else {
-		link = "http://play.pokemonshowdown.com/sprites/xyani/" + pokemon.name + ".gif"
+		tempname = pokemon.name
 	}
-	var tempname = pokemon.name
+	if (link == "shiny") {
+		link = "http://play.pokemonshowdown.com/sprites/xyani-shiny/" + tempname + ".gif"
+	}  else {
+		link = "http://play.pokemonshowdown.com/sprites/xyani/" + tempname + ".gif"
+	}
+	var newname = ''
 	if (tempname.includes("-")) {
-		tempname = pokemon.name.replace("-", " (") + ")"
+		newname = pokemon.name.replace("-", " (") + ")"
 	}
 	var embedmsg = new Discord.RichEmbed()
-	.setTitle(tempname.charAt(0).toUpperCase() + tempname.slice(1))
+	.setTitle(newname.charAt(0).toUpperCase() + newname.slice(1))
 	.setImage(link)
 	.addField("Stats:", statsstr(stats), true)
 	.addField("Abilities:", abilitiesstr(abilities), true)
 	.addField("Types:", typesstr(types), true)
-	.addField("Weak Against:", typesstr(weakagain(weak, types)), true)
-	.addField("Super Effective Against:", typesstr(effectagain(strong, types)), true)
+	.addField("Weak Against:", weakorstrprocess(weakagain(weak, types, tempname, abilities)), true)
+	.addField("Resistant Against:", weakorstrprocess(resagainst(weak, types, tempname, abilities)), true)
 	//.addField("Test:", "<:ghost:575145110052929536>", true)
+	var immune = immuneagain(weak, types, abilities)
+	if(immune.length > 0){
+		embedmsg = embedmsg.addField("Immune Against:", weakorstrprocess(immune), true)
+	}
+	embedmsg = embedmsg.addField("Super Effective Against:", typesstr(effectagain(strong, types)), true)
 
 	msg.channel.send(embedmsg)
 }
@@ -541,22 +603,162 @@ function statsstr(arr) {
 	return stats;
 }
 
-function weakagain(arr, types) {
+function weakorstrprocess(arr, weakorstr){
+	var type = ''
+	if(arr.length > 0){
+		arr.forEach(function (item, index) {
+			type = type + emotes[item.type] + " " + item.type.charAt(0).toUpperCase() + item.type.slice(1) + " (" + item.effect + ")" + "\n";
+		})
+	} else {
+		type = 'No Resistances'
+	}
+	return type
+}
+
+function weakagain(arr, types, pokemon) {
 	var keys = [];
 	console.log("types is " + types.length + " long")
-	if (types.length == 2 && types[1] != null) {
+	if (pokemon.includes("necrozma") && !pokemon.includes("ultra") && types.length == 2 && types[1] != null){
 		_.each(arr, function (val, key) {
-			if (val > 250) {
-				keys.push(key);
+			if (val == 40000) {
+				keys.push({"type" : key,
+						   "effect" : "x3"});
+			} else if (val > 15000) {
+				keys.push({"type" : key,
+						   "effect" : "x1.5"});
+			}
+		});
+	} else if (pokemon.includes("necrozma") && !pokemon.includes("ultra")) {
+		_.each(arr, function (val, key) {
+			if (val > 100) {
+				keys.push({"type" : key,
+						   "effect" : "x1.5"});
+			}
+		});
+	} else if (types.length == 2 && types[1] != null) {
+		_.each(arr, function (val, key) {
+			if (val == 40000) {
+				keys.push({"type" : key,
+						   "effect" : "x4"});
+			} else if (val > 15000) {
+				keys.push({"type" : key,
+						   "effect" : "x2"});
 			}
 		});
 	} else {
 		_.each(arr, function (val, key) {
 			if (val > 100) {
-				keys.push(key);
+				keys.push({"type" : key,
+						   "effect" : "x2"});
 			}
 		});
 	}
+	console.log(keys)
+	//console.log(arr)
+	return keys;
+}
+
+function immuneagain(arr, types, abilities) {
+	var keys = [];
+	var waterabsorb = abilities.includes("water-absorb") && abilities.length == 1
+	var wonderguard = abilities.includes("wonder-guard") && abilities.length == 1
+	var voltabsorb = abilities.includes("volt-absorb") && abilities.length == 1
+	var lightningrod = abilities.includes("lightning-rod") && abilities.length == 1
+	var levitate = abilities.includes("levitate") && abilities.length == 1
+	console.log("types is " + types.length + " long")
+	if (waterabsorb){
+		keys.push({"type" : "water",
+				   "effect" : "x0"})
+	}
+	if (voltabsorb || lightningrod){
+		keys.push({"type" : "electric",
+				   "effect" : "x0"})
+	}
+	if (levitate){
+		keys.push({"type" : "ground",
+				   "effect" : "x0"})
+	}
+	if (wonderguard){
+		keys.push({"type" : "normal",
+				   "effect" : "x0"})
+		keys.push({"type" : "fighting",
+				   "effect" : "x0"})
+		keys.push({"type" : "poison",
+				   "effect" : "x0"})
+		keys.push({"type" : "ground",
+				   "effect" : "x0"})
+		keys.push({"type" : "bug",
+				   "effect" : "x0"})
+		keys.push({"type" : "steel",
+				   "effect" : "x0"})
+		keys.push({"type" : "water",
+				   "effect" : "x0"})
+		keys.push({"type" : "grass",
+				   "effect" : "x0"})
+		keys.push({"type" : "electric",
+				   "effect" : "x0"})
+		keys.push({"type" : "psychic",
+				   "effect" : "x0"})
+		keys.push({"type" : "ice",
+				   "effect" : "x0"})
+		keys.push({"type" : "dragon",
+				   "effect" : "x0"})
+		keys.push({"type" : "fairy",
+				   "effect" : "x0"})
+	} 
+	if (types.length == 2 && types[1] != null) {
+		_.each(arr, function (val, key) {
+			if (val == 0) {
+				keys.push({"type" : key,
+						   "effect" : "x0"});
+			}
+		});
+	} else {
+		_.each(arr, function (val, key) {
+			if (val == 0) {
+				keys.push({"type" : key,
+						   "effect" : "x0"});
+			}
+		});
+	}
+	console.log(keys)
+	//console.log(arr)
+	return keys;
+}
+
+function resagainst(arr, types, pokemon, abilities) {
+	var keys = [];
+	var inability = specialabilities[abilities[0]]
+	var hasability = inability && abilities.length == 1
+	console.log("types is " + types.length + " long")
+	if (pokemon != "shedinja") {
+		if (types.length == 2 && types[1] != null) {
+			_.each(arr, function (val, key) {
+				if (val == 2500 && !hasability) {
+					keys.push({"type" : key,
+							   "effect" : "x1/4"});
+				} else if (val == 5000 && !hasability) {
+					keys.push({"type" : key,
+							   "effect" : "x1/2"});
+				} else if (val == 2500 && hasability && inability != key) {
+					keys.push({"type" : key,
+							   "effect" : "x1/4"});
+				} else if (val == 5000 && hasability && inability != key) {
+					keys.push({"type" : key,
+							   "effect" : "x1/2"});
+				}
+			});
+		} else {
+			_.each(arr, function (val, key) {
+				if (val < 100 && val > 0 && !hasability) {
+					keys.push({"type" : key,
+							   "effect" : "x1/2"});
+				} else if (val < 100 && val > 0 && hasability && inability != key) {
+					keys.push({"type" : key,
+							   "effect" : "x1/2"});
+				}
+			});
+		}}
 	console.log(keys)
 	//console.log(arr)
 	return keys;
@@ -575,7 +777,7 @@ function effectagain(arr, types) {
 		_.each(arr, function (val, key) {
 			if (val > 100) {
 				keys.push(key);
-				console.log(key)
+				//console.log(key)
 			}
 		});
 	}
