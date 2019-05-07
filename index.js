@@ -68,38 +68,61 @@ bot.on('message', function (msg) {
 
 			} else if (pokemon == "deoxys" && args[2]) {
 				pokemon = args[1] + "-" + args[2]
-			} else if(pokemon == "deoxys"){
+			} else if (pokemon == "deoxys") {
 				pokemon = args[1] + "-normal"
-			} else if (pokemon == "mega" && args[2]){
+			} else if (pokemon == "mega" && args[2]) {
 				pokemon = args[2] + "-mega"
 			}
 			pokemoninfo(msg, pokemon, "");
 		}
 
 		if (args[0] === "moves" && args[1]) {
-			//msg.channel.send("http://play.pokemonshowdown.com/sprites/xyani/" + args[1] + ".gif")
-			//check404(msg, args[1]);
-			var pokemon = args[1];
-			var x = 3;
-			var info = '';
-			var abilityinfo = '';
-			pokemongeninfo(msg, pokemon, function (result) {
-				info = result;
-				moves(msg, info, function (result) {
-					sendmoves(msg, info, result)
+			if (args[2] && args[2].toLowerCase() == "all") {
+				var info = '';
+				pokemon = args[1];
+				pokemongeninfo(msg, pokemon, function (result) {
+					info = result;
+					allMoves(msg, info, function (result) {
+						sendmoves(msg, info, result);
+					});
+				});
+			} else if (args[2] && isNumeric(args[2])) {
+				pokemon = args[1];
+				var info = '';
+				pokemongeninfo(msg, pokemon, function (result) {
+					info = result;
+					limitedMoves(msg, info, parseInt(args[2]), function (result) {
+						sendmoves(msg, info, result);
+					})
 				})
-			})
+			} else {
+				var pokemon = args[1];
+				var x = 3;
+				var info = '';
+				var abilityinfo = '';
+
+				pokemongeninfo(msg, pokemon, function (result) {
+					info = result;
+					limitedMoves(msg, info, 10, function (result) {
+						sendmoves(msg, info, result);
+					})
+				})
+			}
 		}
 
-		if (args[0] === "shiny" && args[1]){
+		if (args[0] === "shiny" && args[1]) {
 			var pokemon = args[1];
-			if(pokemon == "alolan" || pokemon == "alola" && args[2]){
+			if (pokemon == "alolan" || pokemon == "alola" && args[2]) {
 				pokemon = args[2] + "-alola"
+			} else if (pokemon == "deoxys") {
+				pokemon = args[1] + "-attack"
 			} else if (pokemon == "deoxys" && args[2]) {
 				pokemon = args[1] + "-" + args[2]
-			} else if(pokemon == "deoxys"){
+			} else if (pokemon == "deoxys") {
 				pokemon = args[1] + "-normal"
-			} else if (pokemon == "mega" && args[2]){
+			} else if (pokemon == "mega" && args[2]) {
+				pokemon = args[2] + "-mega"
+			} else if (pokemon == "mega" && args[2]) {
 				pokemon = args[2] + "-mega"
 			}
 			pokemoninfo(msg, pokemon, "shiny");
@@ -107,137 +130,77 @@ bot.on('message', function (msg) {
 	}
 })
 
-function pokemoninfo(msg, pokemon, shiny){var x = 3;
-			var info = '';
-			var abilityinfo = '';
-			var abilities = '';
-			var stats = '';
-			var types = '';
-			var eff = '';
-			pokemongeninfo(msg, pokemon, function(result){
-				info = result;
-				pokemonabilitiesinfo(msg, info, info.id, function(result){
-					var abilityinfo = result
-					geteachability(msg, info, abilityinfo, function(result){
-						abilities = result
-						pokemonstatinfo(msg, info, abilities, function(result){
-							stats = result
-							pokemontypeinfo(msg, info, abilities, stats, function(result){
-								types = result
-								//sendpokemon(msg, info, abilities, stats, result, shiny);
-								effagain(msg, info, abilities, stats, types, shiny, function(result){
-									//console.log(result)
-									eff = result
-									console.log(result)
-									resagain(msg, info, abilities, stats, types, shiny, eff, function(result){
-										console.log(result)
-										sendpokemon(msg, info, abilities, stats, types, shiny, eff, result);
-									})
-								})
+function pokemoninfo(msg, pokemon, shiny) {
+	var x = 3;
+	var info = '';
+	var abilityinfo = '';
+	var abilities = '';
+	var stats = '';
+	var types = '';
+	var eff = '';
+	pokemongeninfo(msg, pokemon, function (result) {
+		info = result;
+		pokemonabilitiesinfo(msg, info, info.id, function (result) {
+			var abilityinfo = result
+			geteachability(msg, info, abilityinfo, function (result) {
+				abilities = result
+				pokemonstatinfo(msg, info, abilities, function (result) {
+					stats = result
+					pokemontypeinfo(msg, info, abilities, stats, function (result) {
+						types = result
+						//sendpokemon(msg, info, abilities, stats, result, shiny);
+						effagain(msg, info, abilities, stats, types, shiny, function (result) {
+							//console.log(result)
+							eff = result
+							console.log(result)
+							resagain(msg, info, abilities, stats, types, shiny, eff, function (result) {
+								console.log(result)
+								sendpokemon(msg, info, abilities, stats, types, shiny, eff, result);
 							})
 						})
 					})
 				})
-			})}
+			})
+		})
+	})
+}
 
-function effagain(msg, info, abilities, stats, types, shiny, callback){
+function effagain(msg, info, abilities, stats, types, shiny, callback) {
 	var sql = 'SELECT * FROM type_efficacy where';
 	var type = new Array(types.length)
-	if (types.length = 2){
+	if (types.length = 2) {
 		var sql = 'SELECT * FROM type_efficacy where damage_type = ? or damage_type = ?';
-	} else if (types.length = 1){
+	} else if (types.length = 1) {
 		var sql = 'SELECT * FROM type_efficacy where damage_type = ?';
 	}
 
-	connection.query(sql, types, function(err,rows,fields){
-		var dbfarr = {"normal" : 0,
-									"fighting" : 0,
-								  "flying" : 0,
-									"poison" : 0,
-									"ground" : 0,
-									"rock" : 0,
-									"bug" : 0,
-									"ghost" : 0,
-									"steel" : 0,
-									"fire" : 0,
-									"water" : 0,
-									"grass" : 0,
-									"electric" : 0,
-									"psychic" : 0,
-									"ice" : 0,
-									"dragon" : 0,
-									"dark" : 0,
-									"fairy" : 0}
+	connection.query(sql, types, function (err, rows, fields) {
+		var dbfarr = {
+			"normal": 0,
+			"fighting": 0,
+			"flying": 0,
+			"poison": 0,
+			"ground": 0,
+			"rock": 0,
+			"bug": 0,
+			"ghost": 0,
+			"steel": 0,
+			"fire": 0,
+			"water": 0,
+			"grass": 0,
+			"electric": 0,
+			"psychic": 0,
+			"ice": 0,
+			"dragon": 0,
+			"dark": 0,
+			"fairy": 0
+		}
 		// Loop over the response rows and put the information into an array of maps
 		// We can then use this to create our buttons
 
 		rows.forEach(function (item, index) {
 			var target = item.target_type
 			dbfarr[target] = dbfarr[target] + item.damage_factor
-	});
-	//console.log(dbfarr[0])
-	if(err){
-		console.log("We have an error:");
-		console.log(err);
-	}
-	return callback(dbfarr)
-});
-}
-
-function resagain(msg, info, abilities, stats, types, shiny, eff, callback){
-	var sql = 'SELECT * FROM type_efficacy where';
-	if (types.length = 2){
-		var sql = 'SELECT * FROM type_efficacy where target_type = ? or target_type = ?';
-	} else if (types.length = 1){
-		var sql = 'SELECT * FROM type_efficacy where target_type = ?';
-	}
-
-	connection.query(sql, types, function(err,rows,fields){
-		var dbfarr = {"normal" : 0,
-									"fighting" : 0,
-								  "flying" : 0,
-									"poison" : 0,
-									"ground" : 0,
-									"rock" : 0,
-									"bug" : 0,
-									"ghost" : 0,
-									"steel" : 0,
-									"fire" : 0,
-									"water" : 0,
-									"grass" : 0,
-									"electric" : 0,
-									"psychic" : 0,
-									"ice" : 0,
-									"dragon" : 0,
-									"dark" : 0,
-									"fairy" : 0}
-		// Loop over the response rows and put the information into an array of maps
-		// We can then use this to create our buttons
-
-		rows.forEach(function (item, index) {
-			var target = item.damage_type
-			dbfarr[target] = dbfarr[target] + item.damage_factor
-	});
-	//console.log(dbfarr[0])
-	if(err){
-		console.log("We have an error:");
-		console.log(err);
-	}
-	return callback(dbfarr)
-});
-
-}
-
-function moves(msg, info, callback) {
-	var sql = 'SELECT distinct identifier from new_moves where pokemon_id = ?';
-	connection.query(sql, info.id, function (err, rows, fields) {
-		var dbfarr = new Array(rows.length);
-		// Loop over the response rows and put the information into an array of maps
-		// We can then use this to create our buttons
-
-		rows.forEach(function (item, index) {
-
-			dbfarr[index] = item.identifier
 		});
 		//console.log(dbfarr[0])
 		if (err) {
@@ -246,6 +209,131 @@ function moves(msg, info, callback) {
 		}
 		return callback(dbfarr)
 	});
+}
+
+function resagain(msg, info, abilities, stats, types, shiny, eff, callback) {
+	var sql = 'SELECT * FROM type_efficacy where';
+	if (types.length = 2) {
+		var sql = 'SELECT * FROM type_efficacy where target_type = ? or target_type = ?';
+	} else if (types.length = 1) {
+		var sql = 'SELECT * FROM type_efficacy where target_type = ?';
+		if (args[0] === "moves" && args[1]) {
+			if (args[2] && args[2].toLowerCase() == "all") {
+				var info = '';
+				pokemon = args[1];
+				pokemongeninfo(msg, pokemon, function (result) {
+					info = result;
+					allMoves(msg, info, function (result) {
+						sendmoves(msg, info, result);
+					});
+				});
+			} else if (args[2] && isNumeric(args[2])) {
+				pokemon = args[1];
+				var info = '';
+				pokemongeninfo(msg, pokemon, function (result) {
+					info = result;
+					limitedMoves(msg, info, parseInt(args[2]), function (result) {
+						sendmoves(msg, info, result);
+					})
+				})
+			} else {
+				var pokemon = args[1];
+				var x = 3;
+				var info = '';
+				var abilityinfo = '';
+
+				pokemongeninfo(msg, pokemon, function (result) {
+					info = result;
+					limitedMoves(msg, info, 10, function (result) {
+						sendmoves(msg, info, result);
+					})
+				})
+			}
+		}
+		if (args[0] === "shiny" && args[1]) {
+			msg.channel.send("http://play.pokemonshowdown.com/sprites/xyani-shiny/" + args[1] + ".gif")
+		}
+	}
+
+	connection.query(sql, types, function (err, rows, fields) {
+		var dbfarr = {
+			"normal": 0,
+			"fighting": 0,
+			"flying": 0,
+			"poison": 0,
+			"ground": 0,
+			"rock": 0,
+			"bug": 0,
+			"ghost": 0,
+			"steel": 0,
+			"fire": 0,
+			"water": 0,
+			"grass": 0,
+			"electric": 0,
+			"psychic": 0,
+			"ice": 0,
+			"dragon": 0,
+			"dark": 0,
+			"fairy": 0
+		}
+		// Loop over the response rows and put the information into an array of maps
+		// We can then use this to create our buttons
+
+		rows.forEach(function (item, index) {
+			var target = item.damage_type
+			dbfarr[target] = dbfarr[target] + item.damage_factor
+		});
+		//console.log(dbfarr[0])
+		if (err) {
+			console.log("We have an error:");
+			console.log(err);
+		}
+		return callback(dbfarr)
+	});
+
+}
+
+function isNumeric(n) {
+	return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+function allMoves(msg, info, callback) {
+	var sql = 'SELECT distinct identifier from new_moves where pokemon_id = ?';
+	connection.query(sql, info.id, function (err, rows, fields) {
+		var dbfarr = new Array(rows.length);
+		// Loop over the response rows and put the information into an array of maps
+		// We can then use this to create our buttons
+
+		rows.forEach(function (item, index) {
+			dbfarr[index] = { "identifier": item.identifier };
+		});
+		if (err) {
+			console.log("We have an error:");
+			console.log(sql);
+			console.log(err);
+		}
+		return callback(dbfarr)
+	});
+}
+
+function limitedMoves(msg, info, count, callback) {
+	var sql = 'SELECT DISTINCT identifier FROM new_moves WHERE pokemon_id=? ORDER BY RAND() LIMIT ?';
+	var insertedValues = [info.id, count];
+
+	connection.query(sql, insertedValues, function (err, rows, field) {
+		var dbfarr = new Array(rows.length);
+
+		rows.forEach(function (item, index) {
+			dbfarr[index] = { "identifier": item.identifier };
+		});
+		if (err) {
+			console.log("We have an error:");
+			console.log(sql);
+			console.log(err);
+		}
+
+		return callback(dbfarr);
+	})
 }
 
 function check404(msg, pokemon) {
@@ -399,8 +487,8 @@ function getabilities(abilities, id, callback) {
 		// We can then use this to create our buttons
 
 
-	rows.forEach(function (item, index) {
-		dbfarr[index] = item.identifier
+		rows.forEach(function (item, index) {
+			dbfarr[index] = item.identifier
 		});
 		//console.log(dbfarr)
 		if (err) {
@@ -414,20 +502,20 @@ function getabilities(abilities, id, callback) {
 }
 
 
-function sendpokemon(msg, pokemon, abilities, stats, types, shiny, strong, weak){
+function sendpokemon(msg, pokemon, abilities, stats, types, shiny, strong, weak) {
 	console.log(pokemon)
 	var link = shiny
-	if (link == "shiny" && pokemon.name == "deoxys-normal"){
+	if (link == "shiny" && pokemon.name == "deoxys-normal") {
 		link = "http://play.pokemonshowdown.com/sprites/xyani-shiny/deoxys.gif"
 	} else if (link == "shiny") {
 		link = "http://play.pokemonshowdown.com/sprites/xyani-shiny/" + pokemon.name + ".gif"
-	} else if (pokemon.name == "deoxys-normal"){
+	} else if (pokemon.name == "deoxys-normal") {
 		link = "http://play.pokemonshowdown.com/sprites/xyani/deoxys.gif"
 	} else {
 		link = "http://play.pokemonshowdown.com/sprites/xyani/" + pokemon.name + ".gif"
 	}
 	var tempname = pokemon.name
-	if(tempname.includes("-")){
+	if (tempname.includes("-")) {
 		tempname = pokemon.name.replace("-", " (") + ")"
 	}
 	var embedmsg = new Discord.RichEmbed()
@@ -453,8 +541,8 @@ function sendmoves(msg, pokemon, moves) {
 function abilitiesstr(arr) {
 	var abilities = ''
 
-	arr.forEach(function(item, index){
-		tempability = item.replace("-", " ")
+	arr.forEach(function (item, index) {
+		tempability = item.identifier.replace("-", " ")
 		abilities = abilities + tempability.charAt(0).toUpperCase() + tempability.slice(1) + '\n';
 	})
 	console.log(abilities)
@@ -464,7 +552,7 @@ function abilitiesstr(arr) {
 
 function statsstr(arr) {
 	var stats = ''
-	arr.forEach(function(item, index){
+	arr.forEach(function (item, index) {
 		stats = stats + item.identifier.charAt(0).toUpperCase() + item.identifier.slice(1) + ': ' + item.base_stat + "\n";
 	})
 	console.log(stats)
@@ -472,19 +560,19 @@ function statsstr(arr) {
 	return stats;
 }
 
-function weakagain(arr, types){
+function weakagain(arr, types) {
 	var keys = [];
 	console.log("types is " + types.length + " long")
-	if(types.length == 2 && types[1] != null){
-		_.each( arr, function( val, key ) {
-			if ( val > 200) {
+	if (types.length == 2 && types[1] != null) {
+		_.each(arr, function (val, key) {
+			if (val > 200) {
 				keys.push(key.charAt(0).toUpperCase() + key.slice(1));
 				console.log(key)
 			}
 		});
 	} else {
-		_.each( arr, function( val, key ) {
-			if ( val > 100) {
+		_.each(arr, function (val, key) {
+			if (val > 100) {
 				keys.push(key.charAt(0).toUpperCase() + key.slice(1));
 				console.log(key)
 			}
@@ -495,18 +583,18 @@ function weakagain(arr, types){
 	return keys;
 }
 
-function effectagain(arr, types){
+function effectagain(arr, types) {
 	var keys = [];
-	if(types.length == 2 && types[1] != null){
-		_.each( arr, function( val, key ) {
-			if ( val > 200) {
+	if (types.length == 2 && types[1] != null) {
+		_.each(arr, function (val, key) {
+			if (val > 200) {
 				keys.push(key.charAt(0).toUpperCase() + key.slice(1));
 				console.log(key)
 			}
 		});
 	} else {
-		_.each( arr, function( val, key ) {
-			if ( val > 100) {
+		_.each(arr, function (val, key) {
+			if (val > 100) {
 				keys.push(key.charAt(0).toUpperCase() + key.slice(1));
 				console.log(key)
 			}
