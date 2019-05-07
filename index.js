@@ -5,7 +5,6 @@ credentials = require('./credentials.json')
 const rp = require('request-promise')
 port = process.env.PORT || 1337;
 var async = require("async");
-//const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
 var emotes = {
 	"water" : "<:water:575145110157918229>",
 	"steel" : "<:steel:575145110208118786>",
@@ -207,13 +206,9 @@ function pokemoninfo(msg, pokemon, shiny) {
 						stats = result
 						pokemontypeinfo(msg, info, abilities, stats, function (result) {
 							types = result
-							//sendpokemon(msg, info, abilities, stats, result, shiny);
 							effagain(msg, info, abilities, stats, types, shiny, function (result) {
-								//console.log(result)
 								eff = result
-								//console.log(result)
 								resagain(msg, info, abilities, stats, types, shiny, eff, function (result) {
-									console.log(result)
 									sendpokemon(msg, info, abilities, stats, types, shiny, eff, result);
 							})
 						})
@@ -254,14 +249,11 @@ function effagain(msg, info, abilities, stats, types, shiny, callback) {
 			"dark": 0,
 			"fairy": 0
 		}
-		// Loop over the response rows and put the information into an array of maps
-		// We can then use this to create our buttons
 
 		rows.forEach(function (item, index) {
 			var target = item.target_type
 			dbfarr[target] = dbfarr[target] + item.damage_factor
 		});
-		//console.log(dbfarr[0])
 		if (err) {
 			console.log("We have an error:");
 			console.log(err);
@@ -298,8 +290,6 @@ function resagain(msg, info, abilities, stats, types, shiny, eff, callback) {
 			"dark": 1,
 			"fairy": 1
 		}
-		// Loop over the response rows and put the information into an array of maps
-		// We can then use this to create our buttons
 
 		rows.forEach(function (item, index) {
 			var target = item.damage_type
@@ -307,7 +297,6 @@ function resagain(msg, info, abilities, stats, types, shiny, eff, callback) {
 				dbfarr[target] = dbfarr[target] * item.damage_factor
 			}
 		});
-		//console.log(dbfarr[0])
 		if (err) {
 			console.log("We have an error:");
 			console.log(err);
@@ -325,8 +314,6 @@ function allMoves(msg, info, callback) {
 	var sql = 'SELECT distinct identifier from new_moves where pokemon_id = ?';
 	connection.query(sql, info.id, function (err, rows, fields) {
 		var dbfarr = new Array(rows.length);
-		// Loop over the response rows and put the information into an array of maps
-		// We can then use this to create our buttons
 
 		rows.forEach(function (item, index) {
 			dbfarr[index] = item.identifier;
@@ -344,8 +331,6 @@ function allPokemon(callback) {
 	var sql = 'SELECT id, stat_identifier from pokemon';
 	connection.query(sql, function (err, rows, fields) {
 		var dbfarr = new Array(rows.length);
-		// Loop over the response rows and put the information into an array of maps
-		// We can then use this to create our buttons
 
 		rows.forEach(function (item, index) {
 			dbfarr[item.stat_identifier] = item.id;
@@ -394,7 +379,7 @@ function check404(msg, pokemon) {
 
 function pokemongeninfo(msg, pokemon, callback) {
 	var pokemoninfo = {"name": pokemon,
-								 	 	 "id": antiinject[pokemon]}
+					   "id": antiinject[pokemon]}
 	return callback(pokemoninfo)
 }
 
@@ -402,8 +387,6 @@ function pokemonstatinfo(msg, info, abilities, callback) {
 	var sql = 'SELECT * FROM pokemon_stats where pokemon_id = ?';
 	connection.query(sql, info.id, function (err, rows, fields) {
 		var dbfarr = new Array(rows.length);
-		// Loop over the response rows and put the information into an array of maps
-		// We can then use this to create our buttons
 
 		rows.forEach(function (item, index) {
 			dbfarr[index] = {
@@ -411,7 +394,6 @@ function pokemonstatinfo(msg, info, abilities, callback) {
 				"identifier": item.identifier
 			};
 		});
-		//console.log(dbfarr[0])
 		if (err) {
 			console.log("We have an error:");
 			console.log(err);
@@ -424,13 +406,10 @@ function pokemontypeinfo(msg, info, abilities, stats, callback) {
 	var sql = 'SELECT * FROM pokemon_types where pokemon_id = ?';
 	connection.query(sql, info.id, function (err, rows, fields) {
 		var dbfarr = new Array(rows.length);
-		// Loop over the response rows and put the information into an array of maps
-		// We can then use this to create our buttons
 
 		rows.forEach(function (item, index) {
 			dbfarr[index] = item.type
 		});
-		//console.log(dbfarr[0])
 		if (err) {
 			console.log("We have an error:");
 			console.log(err);
@@ -443,13 +422,10 @@ function pokemonabilitiesinfo(msg, info, id, callback) {
 	var sql = 'SELECT * FROM pokemon_abilities where pokemon_id = ?';
 	connection.query(sql, id, function (err, rows, fields) {
 		var dbfarr = new Array(rows.length);
-		// Loop over the response rows and put the information into an array of maps
-		// We can then use callbackthis to create our buttons
 
 		rows.forEach(function (item, index) {
 			dbfarr[index] = item.ability_id
 		});
-		//console.log(dbfarr)
 		if (err) {
 			console.log("We have an error:");
 			console.log(err); callback
@@ -458,37 +434,8 @@ function pokemonabilitiesinfo(msg, info, id, callback) {
 	});
 }
 
-
-/*function geteachability(msg, info, abilityarr, callback){
-var abilities = new Array(callbackabilityarr.length)
-var itemsProcessed = 0;
-abilityarr.forEach((item, index) => {
-AsyncFunction(item, index, () => {
-abilities[index] = getabilities(item.ability_id);
-itemsProcessed++;
-if(itemsProcessed === abilityarr.length){return callback(abilities)}
-})callback
-})
-}*/
-
 function geteachability(msg, info, abilityarr, callback) {
 	var abilities = new Array(abilityarr.length)
-	/*abilityarr.forEach(function(item, index){
-	console.log(item.ability_id)
-	/*getabilities(item.ability_id, index, function(result){
-	//console.log("Hello")
-	abilities[index] = result
-	//console.log(index)
-	//console.log(result)
-	//console.log(abilities[index])
-	console.log(abilities)
-})
-abilities[index] = getabilities(item.ability_id);
-var i = getabilities(item.ability_id);
-console.log(i)
-console.log(getabilities(item.ability_id))
-})
-console.log(abilities)*/
 	getabilities(abilities, abilityarr, function (result) {
 		return callback(result);
 	})
@@ -503,27 +450,18 @@ function getabilities(abilities, id, callback) {
 	} else if (id.length = 1) {
 		var sql = 'SELECT * FROM abilities where id = ?';
 	}
-
-	console.log(id)
-	//console.log(id)
 	connection.query(sql, id, function (err, rows, fields) {
-		//console.log(sql)
 		var dbfarr = new Array(rows.length);
-		// Loop over the response rows and put the information into an array of maps
-		// We can then use this to create our buttons
-
 
 		rows.forEach(function (item, index) {
 			dbfarr[index] = item.identifier
 		});
-		//console.log(dbfarr)
 		if (err) {
 			console.log("We have an error:");
 			console.log(err);
 		}
 		console.log(dbfarr)
 		return callback(dbfarr);
-		//return dbfarr[0]
 	});
 }
 
@@ -554,7 +492,6 @@ function sendpokemon(msg, pokemon, abilities, stats, types, shiny, strong, weak)
 	.addField("Types:", typesstr(types), true)
 	.addField("Weak Against:", weakorstrprocess(weakagain(weak, types, tempname, abilities)), true)
 	.addField("Resistant Against:", weakorstrprocess(resagainst(weak, types, tempname, abilities)), true)
-	//.addField("Test:", "<:ghost:575145110052929536>", true)
 	var immune = immuneagain(weak, types, abilities)
 	if(immune.length > 0){
 		embedmsg = embedmsg.addField("Immune Against:", weakorstrprocess(immune), true)
@@ -579,8 +516,6 @@ function abilitiesstr(arr) {
 		var tempability = item.replace("-", " ")
 		abilities = abilities + tempability.charAt(0).toUpperCase() + tempability.slice(1) + '\n';
 	})
-	console.log(abilities)
-	console.log(arr)
 	return abilities;
 }
 
@@ -589,7 +524,6 @@ function typesstr(arr) {
 	arr.forEach(function (item, index) {
 		type = type + emotes[item] + " " + item.charAt(0).toUpperCase() + item.slice(1) + "\n";
 	})
-	console.log(arr)
 	return type;
 }
 
@@ -598,8 +532,6 @@ function statsstr(arr) {
 	arr.forEach(function (item, index) {
 		stats = stats + item.identifier.charAt(0).toUpperCase() + item.identifier.slice(1) + ': ' + item.base_stat + "\n";
 	})
-	console.log(stats)
-	console.log(arr)
 	return stats;
 }
 
@@ -617,7 +549,6 @@ function weakorstrprocess(arr, weakorstr){
 
 function weakagain(arr, types, pokemon) {
 	var keys = [];
-	console.log("types is " + types.length + " long")
 	if (pokemon.includes("necrozma") && !pokemon.includes("ultra") && types.length == 2 && types[1] != null){
 		_.each(arr, function (val, key) {
 			if (val == 40000) {
@@ -653,8 +584,6 @@ function weakagain(arr, types, pokemon) {
 			}
 		});
 	}
-	console.log(keys)
-	//console.log(arr)
 	return keys;
 }
 
@@ -665,7 +594,6 @@ function immuneagain(arr, types, abilities) {
 	var voltabsorb = abilities.includes("volt-absorb") && abilities.length == 1
 	var lightningrod = abilities.includes("lightning-rod") && abilities.length == 1
 	var levitate = abilities.includes("levitate") && abilities.length == 1
-	console.log("types is " + types.length + " long")
 	if (waterabsorb){
 		keys.push({"type" : "water",
 				   "effect" : "x0"})
@@ -721,8 +649,6 @@ function immuneagain(arr, types, abilities) {
 			}
 		});
 	}
-	console.log(keys)
-	//console.log(arr)
 	return keys;
 }
 
@@ -730,7 +656,6 @@ function resagainst(arr, types, pokemon, abilities) {
 	var keys = [];
 	var inability = specialabilities[abilities[0]]
 	var hasability = inability && abilities.length == 1
-	console.log("types is " + types.length + " long")
 	if (pokemon != "shedinja") {
 		if (types.length == 2 && types[1] != null) {
 			_.each(arr, function (val, key) {
@@ -759,8 +684,6 @@ function resagainst(arr, types, pokemon, abilities) {
 				}
 			});
 		}}
-	console.log(keys)
-	//console.log(arr)
 	return keys;
 }
 
@@ -770,18 +693,14 @@ function effectagain(arr, types) {
 		_.each(arr, function (val, key) {
 			if (val > 200) {
 				keys.push(key);
-				console.log(key)
 			}
 		});
 	} else {
 		_.each(arr, function (val, key) {
 			if (val > 100) {
 				keys.push(key);
-				//console.log(key)
 			}
 		});
 	}
-	console.log(keys)
-	//console.log(arr)
 	return keys;
 }
