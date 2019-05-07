@@ -65,6 +65,7 @@ bot.on('message', function (msg) {
 			if (args[2] && args[2].toLowerCase() == "all") {
 				console.log("Got into the all statement");
 				var info = '';
+				pokemon = args[1];
 				pokemongeninfo(msg, pokemon, function (result) {
 					info = result;
 					allMoves(msg, info, function (result) {
