@@ -46,7 +46,10 @@ var specialpokemon = {
 	"giratina-altered" : "giratina",
 	"wormadam-plant" : "wormadam",
 	"deoxys-normal" : "deoxys",
-	"nidoran-m" : "nidoran"
+	"nidoran-m" : "nidoran",
+	"kommo-o" : "kommoo",
+	"hakamo-o" : "hakamoo",
+	"jangmo-o" : "jangmoo"
 }
 
 var specialabilities = {
@@ -492,7 +495,9 @@ function sendpokemon(msg, pokemon, abilities, stats, types, shiny, strong, weak)
 		link = "http://play.pokemonshowdown.com/sprites/xyani/" + tempname + ".gif"
 	}
 	var newname = ''
-	if (tempname.includes("-")) {
+	if (pokemon.name == "porygon-z" || pokemon.name.includes("tapu") || pokemon.name.endsWith("-o")) {
+		newname = pokemon.name
+	} else if (tempname.includes("-")) {
 		newname = tempname.replace("-", " (") + ")"
 	} else {
 		newname = tempname
@@ -532,9 +537,13 @@ function abilitiesstr(arr) {
 
 function typesstr(arr) {
 	var type = ''
-	arr.forEach(function (item, index) {
-		type = type + emotes[item] + " " + item.charAt(0).toUpperCase() + item.slice(1) + "\n";
-	})
+	if(arr.length > 0){
+		arr.forEach(function (item, index) {
+			type = type + emotes[item] + " " + item.charAt(0).toUpperCase() + item.slice(1) + "\n";
+		})
+	} else {
+		type = 'No Effectiveness'
+	}
 	return type;
 }
 
@@ -546,7 +555,7 @@ function statsstr(arr) {
 	return stats;
 }
 
-function weakorstrprocess(arr, weakorstr){
+function weakorstrprocess(arr){
 	var type = ''
 	if(arr.length > 0){
 		arr.forEach(function (item, index) {
