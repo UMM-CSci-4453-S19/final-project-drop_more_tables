@@ -75,11 +75,15 @@ bot.on('message', function (msg) {
 			var pokemon = args[1];
 			if(pokemon == "alolan" || pokemon == "alola" && args[2]){
 				pokemon = args[2] + "-alola"
+			} else if (pokemon == "deoxys") {
+				pokemon = args[1] + "-attack"
 			} else if (pokemon == "deoxys" && args[2]) {
 				pokemon = args[1] + "-" + args[2]
 			} else if(pokemon == "deoxys"){
 				pokemon = args[1] + "-normal"
 			} else if (pokemon == "mega" && args[2]){
+				pokemon = args[2] + "-mega"
+			} else if (pokemon == "mega" && args[2]) {
 				pokemon = args[2] + "-mega"
 			}
 			pokemoninfo(msg, pokemon, "shiny");
@@ -96,11 +100,11 @@ function pokemoninfo(msg, pokemon, shiny){var x = 3;
 			var eff = '';
 			pokemongeninfo(msg, pokemon, function(result){
 				info = result;
-				pokemonabilitiesinfo(msg, info, info.id, function(result){
+				pokemonabilitiesinfo(msg, info, info.id, function (result) {
 					var abilityinfo = result
-					geteachability(msg, info, abilityinfo, function(result){
+					geteachability(msg, info, abilityinfo, function (result) {
 						abilities = result
-						pokemonstatinfo(msg, info, abilities, function(result){
+						pokemonstatinfo(msg, info, abilities, function (result) {
 							stats = result
 							pokemontypeinfo(msg, info, abilities, stats, function(result){
 								types = result
@@ -227,6 +231,42 @@ function resagain(msg, info, abilities, stats, types, shiny, eff, callback){
 		var sql = 'SELECT * FROM type_efficacy where target_type = ? or target_type = ?';
 	} else if (types.length = 1){
 		var sql = 'SELECT * FROM type_efficacy where target_type = ?';
+		if (args[0] === "moves" && args[1]) {
+			if (args[2] && args[2].toLowerCase() == "all") {
+				var info = '';
+				pokemon = args[1];
+				pokemongeninfo(msg, pokemon, function (result) {
+					info = result;
+					allMoves(msg, info, function (result) {
+						sendmoves(msg, info, result);
+					});
+				});
+			} else if (args[2] && isNumeric(args[2])) {
+				pokemon = args[1];
+				var info = '';
+				pokemongeninfo(msg, pokemon, function (result) {
+					info = result;
+					limitedMoves(msg, info, parseInt(args[2]), function (result) {
+						sendmoves(msg, info, result);
+					})
+				})
+			} else {
+				var pokemon = args[1];
+				var x = 3;
+				var info = '';
+				var abilityinfo = '';
+
+				pokemongeninfo(msg, pokemon, function (result) {
+					info = result;
+					limitedMoves(msg, info, 10, function (result) {
+						sendmoves(msg, info, result);
+					})
+				})
+			}
+		}
+		if (args[0] === "shiny" && args[1]) {
+			msg.channel.send("http://play.pokemonshowdown.com/sprites/xyani-shiny/" + args[1] + ".gif")
+		}
 	}
 
 	connection.query(sql, types, function(err,rows,fields){
@@ -322,7 +362,11 @@ function resagain(msg, info, abilities, stats, types, shiny, eff, callback){
 
 }
 
-function moves(msg, info, callback) {
+function isNumeric(n) {
+	return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+function allMoves(msg, info, callback) {
 	var sql = 'SELECT distinct identifier from new_moves where pokemon_id = ?';
 	connection.query(sql, info.id, function (err, rows, fields) {
 		var dbfarr = new Array(rows.length);
@@ -330,16 +374,35 @@ function moves(msg, info, callback) {
 		// We can then use this to create our buttons
 
 		rows.forEach(function (item, index) {
-
-			dbfarr[index] = item.identifier
+			dbfarr[index] = { "identifier": item.identifier };
 		});
-		//console.log(dbfarr[0])
 		if (err) {
 			console.log("We have an error:");
+			console.log(sql);
 			console.log(err);
 		}
 		return callback(dbfarr)
 	});
+}
+
+function limitedMoves(msg, info, count, callback) {
+	var sql = 'SELECT DISTINCT identifier FROM new_moves WHERE pokemon_id=? ORDER BY RAND() LIMIT ?';
+	var insertedValues = [info.id, count];
+
+	connection.query(sql, insertedValues, function (err, rows, field) {
+		var dbfarr = new Array(rows.length);
+
+		rows.forEach(function (item, index) {
+			dbfarr[index] = { "identifier": item.identifier };
+		});
+		if (err) {
+			console.log("We have an error:");
+			console.log(sql);
+			console.log(err);
+		}
+
+		return callback(dbfarr);
+	})
 }
 
 function check404(msg, pokemon) {
