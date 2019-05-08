@@ -26,9 +26,31 @@ var emotes = {
 	"poison" : "<:poison:575152705786478593>"
 }
 
+var typecol = {
+	"water" : "#4e90d6",
+	"steel" : "#5599a4",
+	"rock" : "#c8b88b",
+	"psychic" : "#f86e75",
+	"normal" : "#9ca0a0",
+	"ice" : "#90dbd6",
+	"ground" : "#d59262",
+	"grass" : "#5fbb5c",
+	"ghost" : "#646ebf",
+	"flying" : "#a0baea",
+	"fire" : "#ffa550",
+	"fighting" : "#d64261",
+	"fairy" : "#ec95e1",
+	"electric" : "#f6d850",
+	"dragon" : "#096dc0",
+	"bug" : "#90c12d",
+	"dark" : "#5c5669",
+	"poison" : "#c661d5"
+}
+
 var specialpokemon = {
 	"thundurus-incarnate" : "thundurus",
 	"landorus-incarnate" : "landorus",
+	"tornadus-incarnate" : "tornadus",
 	"meloetta-aria" : "meloetta",
 	"keldeo-ordinary" : "keldeo",
 	"meowstic-male" : "meowstic",
@@ -726,7 +748,8 @@ function sendpokemon(msg, pokemon, abilities, stats, types, shiny, strong, weak)
 	} else {
 		newname = tempname
 	}
-	var color = Math.floor(Math.random() * 16777214) + 1
+	console.log(types[0])
+	var color = typecol[types[0]]
 	var embedmsg = new Discord.RichEmbed()
 	.setTitle(newname.charAt(0).toUpperCase() + newname.slice(1))
 	.setImage(link)
