@@ -127,8 +127,8 @@ bot.login(credentials.botid)
 
 bot.on('ready', function () {
 	console.log('The bot is online!')
-	bot.user.setActivity(`playing pokemon in ${bot.guilds.size} servers`)
-	allPokemon(function (result) {
+	bot.user.setActivity(`!pd help`)
+	allPokemon(function(result){
 		antiinject = result
 	})
 })
