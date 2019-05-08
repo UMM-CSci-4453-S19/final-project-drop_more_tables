@@ -769,7 +769,6 @@ function sendpokemon(msg, pokemon, abilities, stats, types, shiny, strong, weak)
 	} else {
 		newname = tempname
 	}
-	console.log(types[0])
 	var color = typecol[types[0]]
 	var embedmsg = new Discord.RichEmbed()
 		.setTitle(newname.charAt(0).toUpperCase() + newname.slice(1))
