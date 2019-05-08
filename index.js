@@ -121,7 +121,11 @@ bot.on('message', function (msg) {
 				.setTitle("Commands")
 				.addField("Pokemon", "Get a pokemon specified by it's name, it's associated stats, and a gif of the Pokemon ```!pd pokemon [name]```")
 				.addField("Shiny:", "Same as Pokemon, but sends a gif of the shiny version ```!pd shiny [name]```")
-				.addField("Moves:", 'Returns a list of the moves that a specified pokemon can learn, by default returns 10 random moves ```!pd moves [name] [number of moves or "all"]```')
+				.addField("Moves:", 'Returns a list of the moves that a specified pokemon can learn, by default returns 10 random moves ```!pd moves [name] [number of moves or "all" (optional)]```')
+				.addField("Custom Create:", 'Creates or edits a custom pokemon ```!pd custom create [name] [health] [attack] [special attack] [defense] [special defense] [speed] [type] [image link (optional)]```')
+				.addField("Custom All:", 'View all custom pokemon you have ```!pd custom all```')
+				.addField("Custom View:", 'View a specific custom pokemon you have ```!pd custom view [name]```')
+				.addField("Custom Delete:", 'Delete a custom pokemon you have ```!pd custom delete [name]```')
 			msg.channel.send(embdmsg);
 		}
 		if (args[0] === "pokemon" && args[1]) {
