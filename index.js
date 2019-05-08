@@ -128,7 +128,7 @@ bot.login(credentials.botid)
 bot.on('ready', function () {
 	console.log('The bot is online!')
 	bot.user.setActivity(`!pd help`)
-	allPokemon(function(result){
+	allPokemon(function (result) {
 		antiinject = result
 	})
 })
@@ -142,8 +142,8 @@ bot.on('message', function (msg) {
 		if (args[0] === "help") {
 			var embdmsg = new Discord.RichEmbed()
 				.setTitle("Commands")
-				.addField("Pokemon", "Get a pokemon specified by it's name, it's associated stats, and a gif of the Pokemon ```!pd pokemon [name]```")
-				.addField("Shiny:", "Same as Pokemon, but sends a gif of the shiny version ```!pd shiny [name]```")
+				.addField("Pokemon", "Get a pokemon specified by it's name, it's associated stats, and a gif of the Pokemon, with the option of showing a mega evolution ```!pd pokemon [name] [mega]```")
+				.addField("Shiny:", "Same as Pokemon, but sends a gif of the shiny version with the option of showing the mega evolution ```!pd shiny [name] [meaga]```")
 				.addField("Moves:", 'Returns a list of the moves that a specified pokemon can learn, by default returns 10 random moves ```!pd moves [name] [number of moves or "all" (optional)]```')
 				.addField("Custom Create:", 'Creates or edits a custom pokemon ```!pd custom create [name] [ability] [health] [attack] [special attack] [defense] [special defense] [speed] [type] [image link (optional)]```')
 				.addField("Custom All:", 'View all custom pokemon you or another person have ```!pd custom all [@<user> (optional)]```')
