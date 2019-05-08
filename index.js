@@ -6,109 +6,109 @@ const rp = require('request-promise')
 port = process.env.PORT || 1337;
 var async = require("async");
 var emotes = {
-	"water" : "<:water:575145110157918229>",
-	"steel" : "<:steel:575145110208118786>",
-	"rock" : "<:rock:575145110262775840>",
-	"psychic" : "<:psychic:575145110208249866>",
-	"normal" : "<:normal:575145110174433283>",
-	"ice" : "<:ice:575145110342205441>",
-	"ground" : "<:ground:575145110350725120>",
-	"grass" : "<:grass:575145109885288459>",
-	"ghost" : "<:ghost:575145110052929536>",
-	"flying" : "<:flying:575145109759459339>",
-	"fire" : "<:fire:575145109696282625>",
-	"fighting" : "<:fighting:575145109969043466>",
-	"fairy" : "<:fairy:575145109654601769>",
-	"electric" : "<:electric:575145110006923264>",
-	"dragon" : "<:dragon:575145109990015004>",
-	"bug" : "<:bug:575145109528772610>",
-	"dark" : "<:dark:575152705920827412>",
-	"poison" : "<:poison:575152705786478593>"
+	"water": "<:water:575145110157918229>",
+	"steel": "<:steel:575145110208118786>",
+	"rock": "<:rock:575145110262775840>",
+	"psychic": "<:psychic:575145110208249866>",
+	"normal": "<:normal:575145110174433283>",
+	"ice": "<:ice:575145110342205441>",
+	"ground": "<:ground:575145110350725120>",
+	"grass": "<:grass:575145109885288459>",
+	"ghost": "<:ghost:575145110052929536>",
+	"flying": "<:flying:575145109759459339>",
+	"fire": "<:fire:575145109696282625>",
+	"fighting": "<:fighting:575145109969043466>",
+	"fairy": "<:fairy:575145109654601769>",
+	"electric": "<:electric:575145110006923264>",
+	"dragon": "<:dragon:575145109990015004>",
+	"bug": "<:bug:575145109528772610>",
+	"dark": "<:dark:575152705920827412>",
+	"poison": "<:poison:575152705786478593>"
 }
 
 var typecol = {
-	"water" : "#4e90d6",
-	"steel" : "#5599a4",
-	"rock" : "#c8b88b",
-	"psychic" : "#f86e75",
-	"normal" : "#9ca0a0",
-	"ice" : "#90dbd6",
-	"ground" : "#d59262",
-	"grass" : "#5fbb5c",
-	"ghost" : "#646ebf",
-	"flying" : "#a0baea",
-	"fire" : "#ffa550",
-	"fighting" : "#d64261",
-	"fairy" : "#ec95e1",
-	"electric" : "#f6d850",
-	"dragon" : "#096dc0",
-	"bug" : "#90c12d",
-	"dark" : "#5c5669",
-	"poison" : "#c661d5"
+	"water": "#4e90d6",
+	"steel": "#5599a4",
+	"rock": "#c8b88b",
+	"psychic": "#f86e75",
+	"normal": "#9ca0a0",
+	"ice": "#90dbd6",
+	"ground": "#d59262",
+	"grass": "#5fbb5c",
+	"ghost": "#646ebf",
+	"flying": "#a0baea",
+	"fire": "#ffa550",
+	"fighting": "#d64261",
+	"fairy": "#ec95e1",
+	"electric": "#f6d850",
+	"dragon": "#096dc0",
+	"bug": "#90c12d",
+	"dark": "#5c5669",
+	"poison": "#c661d5"
 }
 
 var specialpokemon = {
-	"thundurus-incarnate" : "thundurus",
-	"landorus-incarnate" : "landorus",
-	"tornadus-incarnate" : "tornadus",
-	"meloetta-aria" : "meloetta",
-	"keldeo-ordinary" : "keldeo",
-	"meowstic-male" : "meowstic",
-	"meowstic-female" : "meowstic-f",
-	"aegislash-shield" : "aegislash",
-	"pumpkaboo-average" : "pumpkaboo",
-	"gourgeist-average" : "gourgeist",
-	"oricorio-baile" : "oricorio",
-	"lycanroc-midday" : "lycanroc",
-	"wishiwashi-solo" : "wishiwashi",
-	"minior-red-meteor" : "minior-meteor",
-	"mimikyu-disguised" : "mimikyu",
-	"darmanitan-standard" : "darmanitan",
-	"basculin-red-striped" : "basculin",
-	"basculin-blue-striped" : "basculin",
-	"shaymin-land" : "shaymin",
-	"giratina-altered" : "giratina",
-	"wormadam-plant" : "wormadam",
-	"deoxys-normal" : "deoxys",
-	"nidoran-m" : "nidoran",
-	"kommo-o" : "kommoo",
-	"hakamo-o" : "hakamoo",
-	"jangmo-o" : "jangmoo",
-	"charizard-mega-x" : "charizard-megax",
-	"charizard-mega-y" : "charizard-megay",
-	"mewtwo-mega-x" : "mewtwo-megax",
-	"mewtwo-mega-y" : "mewtwo-megay",
-	"pikachu-rock-star" : "pikachu-rockstar",
-	"pikachu-pop-star" : "pikachu-popstar",
-	"pikachu-original-cap" : "pikachu-original",
-	"pikachu-hoenn-cap" : "pikachu-hoenn",
-	"pikachu-sinnoh-cap" : "pikachu-sinnoh",
-	"pikachu-unova-cap" : "pikachu-unova",
-	"pikachu-kalos-cap" : "pikachu-kalos",
-	"pikachu-alola-cap" : "pikachu-alola",
-	"pikachu-partner-cap" : "pikachu-partner",
-	"greninja-battle-bond" : "greninja-ash",
-	"raticate-totem-alola" : "raticate-alola-totem",
-	"oricorio-pom-pom" : "oricorio-pompom",
-	"minior-orange-meteor" : "minior-meteor",
-	"minior-yellow-meteor" : "minior-meteor",
-	"minior-green-meteor" : "minior-meteor",
-	"minior-blue-meteor" : "minior-meteor",
-	"minior-indigo-meteor" : "minior-meteor",
-	"minior-violet-meteor" : "minior-meteor",
-	"mimikyu-disguised-totem" : "mimikyu-totem",
-	"ribombee-totem" : "ribombee",
-	"rockruff-own-tempo" : "rockruff",
-	"necrozma-dusk" : "necrozma-duskmane",
-	"necrozma-dawn" : "necrozma-dawnwings",
-	"minior-red" : "minior"
+	"thundurus-incarnate": "thundurus",
+	"landorus-incarnate": "landorus",
+	"tornadus-incarnate": "tornadus",
+	"meloetta-aria": "meloetta",
+	"keldeo-ordinary": "keldeo",
+	"meowstic-male": "meowstic",
+	"meowstic-female": "meowstic-f",
+	"aegislash-shield": "aegislash",
+	"pumpkaboo-average": "pumpkaboo",
+	"gourgeist-average": "gourgeist",
+	"oricorio-baile": "oricorio",
+	"lycanroc-midday": "lycanroc",
+	"wishiwashi-solo": "wishiwashi",
+	"minior-red-meteor": "minior-meteor",
+	"mimikyu-disguised": "mimikyu",
+	"darmanitan-standard": "darmanitan",
+	"basculin-red-striped": "basculin",
+	"basculin-blue-striped": "basculin",
+	"shaymin-land": "shaymin",
+	"giratina-altered": "giratina",
+	"wormadam-plant": "wormadam",
+	"deoxys-normal": "deoxys",
+	"nidoran-m": "nidoran",
+	"kommo-o": "kommoo",
+	"hakamo-o": "hakamoo",
+	"jangmo-o": "jangmoo",
+	"charizard-mega-x": "charizard-megax",
+	"charizard-mega-y": "charizard-megay",
+	"mewtwo-mega-x": "mewtwo-megax",
+	"mewtwo-mega-y": "mewtwo-megay",
+	"pikachu-rock-star": "pikachu-rockstar",
+	"pikachu-pop-star": "pikachu-popstar",
+	"pikachu-original-cap": "pikachu-original",
+	"pikachu-hoenn-cap": "pikachu-hoenn",
+	"pikachu-sinnoh-cap": "pikachu-sinnoh",
+	"pikachu-unova-cap": "pikachu-unova",
+	"pikachu-kalos-cap": "pikachu-kalos",
+	"pikachu-alola-cap": "pikachu-alola",
+	"pikachu-partner-cap": "pikachu-partner",
+	"greninja-battle-bond": "greninja-ash",
+	"raticate-totem-alola": "raticate-alola-totem",
+	"oricorio-pom-pom": "oricorio-pompom",
+	"minior-orange-meteor": "minior-meteor",
+	"minior-yellow-meteor": "minior-meteor",
+	"minior-green-meteor": "minior-meteor",
+	"minior-blue-meteor": "minior-meteor",
+	"minior-indigo-meteor": "minior-meteor",
+	"minior-violet-meteor": "minior-meteor",
+	"mimikyu-disguised-totem": "mimikyu-totem",
+	"ribombee-totem": "ribombee",
+	"rockruff-own-tempo": "rockruff",
+	"necrozma-dusk": "necrozma-duskmane",
+	"necrozma-dawn": "necrozma-dawnwings",
+	"minior-red": "minior"
 }
 
 var specialabilities = {
-	"water-absorb" : "water",
-	"volt-absorb" : "electric",
-	"lightning-rod" : "electric",
-	"levitate" : "ground"
+	"water-absorb": "water",
+	"volt-absorb": "electric",
+	"lightning-rod": "electric",
+	"levitate": "ground"
 }
 
 var antiinject = []
@@ -127,7 +127,6 @@ bot.login(credentials.botid)
 
 bot.on('ready', function () {
 	console.log('The bot is online!')
-	//bot.user.setActivity(`playing pokemon in ${bot.guilds.size} servers`)
 	bot.user.setActivity(`!pd help`)
 	allPokemon(function(result){
 		antiinject = result
@@ -146,7 +145,7 @@ bot.on('message', function (msg) {
 				.addField("Pokemon", "Get a pokemon specified by it's name, it's associated stats, and a gif of the Pokemon ```!pd pokemon [name]```")
 				.addField("Shiny:", "Same as Pokemon, but sends a gif of the shiny version ```!pd shiny [name]```")
 				.addField("Moves:", 'Returns a list of the moves that a specified pokemon can learn, by default returns 10 random moves ```!pd moves [name] [number of moves or "all" (optional)]```')
-				.addField("Custom Create:", 'Creates or edits a custom pokemon ```!pd custom create [name] [health] [attack] [special attack] [defense] [special defense] [speed] [type] [image link (optional)]```')
+				.addField("Custom Create:", 'Creates or edits a custom pokemon ```!pd custom create [name] [abilitiy] [health] [attack] [special attack] [defense] [special defense] [speed] [type] [image link (optional)]```')
 				.addField("Custom All:", 'View all custom pokemon you or another person have ```!pd custom all [@<user> (optional)]```')
 				.addField("Custom View:", 'View a specific custom pokemon you another person have ```!pd custom view [name] [@<user> (optional)]```')
 				.addField("Custom Delete:", 'Delete a custom pokemon you have ```!pd custom delete [name]```')
@@ -158,7 +157,7 @@ bot.on('message', function (msg) {
 				pokemon = args[2] + "-alola"
 			} else if (pokemon == "tapu" && args[2]) {
 				pokemon = "tapu-" + args[2]
-			} else if(args[2]){
+			} else if (args[2]) {
 				pokemon = args[2] + "-" + args[1]
 			}
 			pokemoninfo(msg, pokemon, "");
@@ -170,7 +169,7 @@ bot.on('message', function (msg) {
 				pokemon = args[2] + "-alola"
 			} else if (pokemon == "tapu" && args[2]) {
 				pokemon = "tapu-" + args[2]
-			} else if(args[3]){
+			} else if (args[3]) {
 				pokemon = args[2] + "-" + args[1]
 			}
 			var info = ''
@@ -184,7 +183,7 @@ bot.on('message', function (msg) {
 				});
 			} else if (args[2] && isNumeric(args[2]) || args[3] && isNumeric(args[3])) {
 				var num = 0;
-				if(args[3]){
+				if (args[3]) {
 					num = parseInt(args[3])
 				} else {
 					num = parseInt(args[2])
@@ -211,7 +210,7 @@ bot.on('message', function (msg) {
 				pokemon = args[2] + "-alola"
 			} else if (pokemon == "tapu" && args[2]) {
 				pokemon = "tapu-" + args[2]
-			} else if(args[2]){
+			} else if (args[2]) {
 				pokemon = args[2] + "-" + args[1]
 			}
 			pokemoninfo(msg, pokemon, "shiny");
@@ -229,21 +228,24 @@ bot.on('message', function (msg) {
 			var speed = parseInt(args[9]).toString()
 			var type = args[10]
 			var img = ''
-			if(args[11] && validURL(args[11]) && !args[11].includes('delimiter') && !args[11].includes(';')){
+			if (args[11] && validURL(args[11]) && !args[11].includes('delimiter') && !args[11].includes(';')) {
 				img = args[11]
 			}
-			if(health != "NaN" && attack != "NaN" && specialattack != "NaN" && defense != "NaN" && specialdefense != "NaN" && speed != "NaN"){
+			if (health != "NaN" && attack != "NaN" && specialattack != "NaN" && defense != "NaN" && specialdefense != "NaN" && speed != "NaN") {
 				var sql = "call CustomPokemonInsert(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 				var inputs = [uid, name, abilities, health, attack, specialattack, defense, specialdefense, speed, type, img]
 				sql = mysql.format(sql, inputs);
-				connection.query(sql,(function(msg){return function (err, rows, fields) {
-					if(err){console.log("We have an insertion error:");
-             				console.log(err);
-             				msg.channel.send("Failed to add.")
-             		} else {
-             			msg.channel.send("Successfully added!")
-             		}
-				}})(msg))
+				connection.query(sql, (function (msg) {
+					return function (err, rows, fields) {
+						if (err) {
+							console.log("We have an insertion error:");
+							console.log(err);
+							msg.channel.send("Failed to add.")
+						} else {
+							msg.channel.send("Successfully added!")
+						}
+					}
+				})(msg))
 			} else {
 				msg.channel.send("Invalid input: stats must contain integers")
 			}
@@ -257,139 +259,154 @@ bot.on('message', function (msg) {
 			var sql = "Delete from ?? where names = ?"
 			var inputs = [uid, name]
 			sql = mysql.format(sql, inputs);
-			connection.query(sql,(function(msg){return function (err, rows, fields) {
-				if(err){console.log("We have an deletion error:");
-             			console.log(err);
-             			msg.channel.send("Failed to delete.")
-             	} else {
-             		msg.channel.send("Successfully deleted!")
-            		}
-			}})(msg))
+			connection.query(sql, (function (msg) {
+				return function (err, rows, fields) {
+					if (err) {
+						console.log("We have an deletion error:");
+						console.log(err);
+						msg.channel.send("Failed to delete.")
+					} else {
+						msg.channel.send("Successfully deleted!")
+					}
+				}
+			})(msg))
 		} else if (args[0] === "custom" && args[1] == "delete") {
 			msg.channel.send("Invalid input")
 		}
 
 		if (args[0] === "custom" && args[1] && args[1] == "all") {
-			if(mention.size == 0){
+			if (mention.size == 0) {
 				var uid = "user_" + msg.member.id.toString();
 				var sql = "Select names from ??"
 				var inputs = [uid]
 				sql = mysql.format(sql, inputs);
-				connection.query(sql,(function(msg){return function (err, rows, fields) {
-					if(err){console.log("We have an selection error:");
-	             			console.log(err);
-	             			msg.channel.send("Failed to gather pokemon.")
-	             	} else {
-	             		var dbfarr = '';
+				connection.query(sql, (function (msg) {
+					return function (err, rows, fields) {
+						if (err) {
+							console.log("We have an selection error:");
+							console.log(err);
+							msg.channel.send("Failed to gather pokemon.")
+						} else {
+							var dbfarr = '';
 
-						rows.forEach(function (item, index) {
-							dbfarr = dbfarr + item.names + "\n";
-						});
-	             		msg.channel.send("**Your Pokemon:**\n" + dbfarr)
-	            	}
-				}})(msg))
+							rows.forEach(function (item, index) {
+								dbfarr = dbfarr + item.names + "\n";
+							});
+							msg.channel.send("**Your Pokemon:**\n" + dbfarr)
+						}
+					}
+				})(msg))
 			} else {
 				var uid = "user_" + mention.first().id.toString()
 				var sql = "Select names from ??"
 				var inputs = [uid]
 				sql = mysql.format(sql, inputs);
-				connection.query(sql,(function(msg){return function (err, rows, fields) {
-					if(err){console.log("We have an selection error:");
-	             			console.log(err);
-	             			msg.channel.send("Failed to gather pokemon.")
-	             	} else {
-	             		var dbfarr = '';
+				connection.query(sql, (function (msg) {
+					return function (err, rows, fields) {
+						if (err) {
+							console.log("We have an selection error:");
+							console.log(err);
+							msg.channel.send("Failed to gather pokemon.")
+						} else {
+							var dbfarr = '';
 
-						rows.forEach(function (item, index) {
-							dbfarr = dbfarr + item.names + "\n";
-						});
-	             		msg.channel.send("**Their Pokemon:**\n" + dbfarr)
-	            	}
-				}})(msg))
+							rows.forEach(function (item, index) {
+								dbfarr = dbfarr + item.names + "\n";
+							});
+							msg.channel.send("**Their Pokemon:**\n" + dbfarr)
+						}
+					}
+				})(msg))
 			}
 		} else if (args[0] === "custom" && args[1] == "all") {
 			msg.channel.send("Invalid input")
 		}
 
 		if (args[0] === "custom" && args[2] && args[1] == "view" && !args[2].includes("delimiter") && !args[2].includes(";")) {
-			if(mention.size == 0){
+			if (mention.size == 0) {
 				var uid = "user_" + msg.member.id.toString();
 				var name = args[2]
 				var sql = "Select * from ?? where names = ?"
 				var inputs = [uid, name]
 				sql = mysql.format(sql, inputs);
-				connection.query(sql,(function(msg){return function (err, rows, fields) {
-					if(err){console.log("We have an selection error:");
-	             			console.log(err);
-	             			msg.channel.send("Failed to gather pokemon.")
-	             	} else {
-	             		var row = rows[0]
-	             		if(row){
-	             			var stats = "Hp: " + row.health + "\n"
-	             			stats = stats + "Attack: " + row.atk + "\n"
-	             			stats = stats + "Special-attack: " + row.specialatk + "\n"
-	             			stats = stats + "Defense: " + row.def + "\n"
-	             			stats = stats + "Special-defense: " + row.specialdef + "\n"
-	             			stats = stats + "Speed: " + row.spd + "\n"
-	             			var img = row.image
-	             			var color
-	 					    if (msg.member.colorRole != null) {
-	  					    	color = msg.member.displayColor
-	 					    } else {
-	  					    	color = Math.floor(Math.random() * 16777214) + 1
-	 					    }
-	             			var embedmsg = new Discord.RichEmbed()
-											.setTitle(row.names.charAt(0).toUpperCase() + row.names.slice(1))
-											.addField("Stats:", stats, true)
-											.addField("Ability:", row.abilities, true)
-											.addField("Type:", row.types, true)
-											.setImage(img)
-											.setColor(color)
-	             			msg.channel.send(embedmsg)
-	             		} else {
-	             			msg.channel.send("Invalid Pokemon.")
-	             		}
-	            	}
-				}})(msg))
+				connection.query(sql, (function (msg) {
+					return function (err, rows, fields) {
+						if (err) {
+							console.log("We have an selection error:");
+							console.log(err);
+							msg.channel.send("Failed to gather pokemon.")
+						} else {
+							var row = rows[0]
+							if (row) {
+								var stats = "Hp: " + row.health + "\n"
+								stats = stats + "Attack: " + row.atk + "\n"
+								stats = stats + "Special-attack: " + row.specialatk + "\n"
+								stats = stats + "Defense: " + row.def + "\n"
+								stats = stats + "Special-defense: " + row.specialdef + "\n"
+								stats = stats + "Speed: " + row.spd + "\n"
+								var img = row.image
+								var color
+								if (msg.member.colorRole != null) {
+									color = msg.member.displayColor
+								} else {
+									color = Math.floor(Math.random() * 16777214) + 1
+								}
+								var embedmsg = new Discord.RichEmbed()
+									.setTitle(row.names.charAt(0).toUpperCase() + row.names.slice(1))
+									.addField("Stats:", stats, true)
+									.addField("Ability:", row.abilities, true)
+									.addField("Type:", row.types, true)
+									.setImage(img)
+									.setColor(color)
+								msg.channel.send(embedmsg)
+							} else {
+								msg.channel.send("Invalid Pokemon.")
+							}
+						}
+					}
+				})(msg))
 			} else {
 				var uid = "user_" + mention.first().id.toString()
 				var sql = "Select * from ?? where names = ?"
 				var name = args[2]
 				var inputs = [uid, name]
 				sql = mysql.format(sql, inputs);
-				connection.query(sql,(function(msg){return function (err, rows, fields) {
-					if(err){console.log("We have an selection error:");
-	             			console.log(err);
-	             			msg.channel.send("Failed to gather pokemon.")
-	             	} else {
-	             		var row = rows[0]
-	             		if(row){
-	             			var stats = "Hp: " + row.health + "\n"
-	             			stats = stats + "Attack: " + row.atk + "\n"
-	             			stats = stats + "Special-attack: " + row.specialatk + "\n"
-	             			stats = stats + "Defense: " + row.def + "\n"
-	             			stats = stats + "Special-defense: " + row.specialdef + "\n"
-	             			stats = stats + "Speed: " + row.spd + "\n"
-	             			var img = row.image
-	             			var color
-	 					    if (msg.member.colorRole != null) {
-	  					    	color = msg.member.displayColor
-	 					    } else {
-	  					    	color = Math.floor(Math.random() * 16777214) + 1
-	 					    }
-	             			var embedmsg = new Discord.RichEmbed()
-											.setTitle(row.names.charAt(0).toUpperCase() + row.names.slice(1))
-											.addField("Stats:", stats, true)
-											.addField("Ability:", row.abilities, true)
-											.addField("Type:", row.types, true)
-											.setImage(img)
-											.setColor(color)
-	             			msg.channel.send(embedmsg)
-	             		} else {
-	             			msg.channel.send("Invalid Pokemon.")
-	             		}
-	            	}
-				}})(msg))
+				connection.query(sql, (function (msg) {
+					return function (err, rows, fields) {
+						if (err) {
+							console.log("We have an selection error:");
+							console.log(err);
+							msg.channel.send("Failed to gather pokemon.")
+						} else {
+							var row = rows[0]
+							if (row) {
+								var stats = "Hp: " + row.health + "\n"
+								stats = stats + "Attack: " + row.atk + "\n"
+								stats = stats + "Special-attack: " + row.specialatk + "\n"
+								stats = stats + "Defense: " + row.def + "\n"
+								stats = stats + "Special-defense: " + row.specialdef + "\n"
+								stats = stats + "Speed: " + row.spd + "\n"
+								var img = row.image
+								var color
+								if (msg.member.colorRole != null) {
+									color = msg.member.displayColor
+								} else {
+									color = Math.floor(Math.random() * 16777214) + 1
+								}
+								var embedmsg = new Discord.RichEmbed()
+									.setTitle(row.names.charAt(0).toUpperCase() + row.names.slice(1))
+									.addField("Stats:", stats, true)
+									.addField("Ability:", row.abilities, true)
+									.addField("Type:", row.types, true)
+									.setImage(img)
+									.setColor(color)
+								msg.channel.send(embedmsg)
+							} else {
+								msg.channel.send("Invalid Pokemon.")
+							}
+						}
+					}
+				})(msg))
 			}
 		} else if (args[0] === "custom" && args[1] == "view") {
 			msg.channel.send("Invalid input")
@@ -399,13 +416,13 @@ bot.on('message', function (msg) {
 
 //source: https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url
 function validURL(str) {
-  var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-    '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-    '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-    '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
-  return !!pattern.test(str);
+	var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+		'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+		'((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+		'(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+		'(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+		'(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+	return !!pattern.test(str);
 }
 
 function pokemoninfo(msg, pokemon, shiny) {
@@ -416,7 +433,7 @@ function pokemoninfo(msg, pokemon, shiny) {
 	var types = '';
 	var eff = '';
 	var processpoke = processpokemon(pokemon);
-	if (antiinject[processpoke]){
+	if (antiinject[processpoke]) {
 		pokemongeninfo(msg, processpoke, function (result) {
 			info = result;
 			pokemonabilitiesinfo(msg, info, info.id, function (result) {
@@ -431,25 +448,26 @@ function pokemoninfo(msg, pokemon, shiny) {
 								eff = result
 								resagain(msg, info, abilities, stats, types, shiny, eff, function (result) {
 									sendpokemon(msg, info, abilities, stats, types, shiny, eff, result);
+								})
 							})
 						})
 					})
 				})
 			})
 		})
-	})}
+	}
 }
 
-function processpokemon(pokemon){
+function processpokemon(pokemon) {
 	var processpoke = ''
-	if (pokemon == "thundurus" || pokemon == "landorus" || pokemon == "tornadus"){
-		processpoke = pokemon + "-incarnate" 
+	if (pokemon == "thundurus" || pokemon == "landorus" || pokemon == "tornadus") {
+		processpoke = pokemon + "-incarnate"
 	} else if (pokemon == "meloetta") {
-		processpoke = pokemon + "-aria" 
+		processpoke = pokemon + "-aria"
 	} else if (pokemon == "keldeo") {
-		processpoke = pokemon + "-ordinary" 
+		processpoke = pokemon + "-ordinary"
 	} else if (pokemon == "meowstic") {
-		processpoke = pokemon + "-male" 
+		processpoke = pokemon + "-male"
 	} else if (pokemon == "aegislash") {
 		processpoke = pokemon + "-shield"
 	} else if (pokemon == "pumpkaboo" || pokemon == "gourgeist") {
@@ -556,7 +574,7 @@ function resagain(msg, info, abilities, stats, types, shiny, eff, callback) {
 
 		rows.forEach(function (item, index) {
 			var target = item.damage_type
-			if(dbfarr[target] != 0){
+			if (dbfarr[target] != 0) {
 				dbfarr[target] = dbfarr[target] * item.damage_factor
 			}
 		});
@@ -641,8 +659,10 @@ function check404(msg, pokemon) {
 }
 
 function pokemongeninfo(msg, pokemon, callback) {
-	var pokemoninfo = {"name": pokemon,
-					   "id": antiinject[pokemon]}
+	var pokemoninfo = {
+		"name": pokemon,
+		"id": antiinject[pokemon]
+	}
 	return callback(pokemoninfo)
 }
 
@@ -731,14 +751,14 @@ function getabilities(abilities, id, callback) {
 function sendpokemon(msg, pokemon, abilities, stats, types, shiny, strong, weak) {
 	var link = shiny
 	var tempname = ''
-	if(specialpokemon[pokemon.name]){
+	if (specialpokemon[pokemon.name]) {
 		tempname = specialpokemon[pokemon.name]
 	} else {
 		tempname = pokemon.name
 	}
 	if (link == "shiny") {
 		link = "http://play.pokemonshowdown.com/sprites/xyani-shiny/" + tempname + ".gif"
-	}  else {
+	} else {
 		link = "http://play.pokemonshowdown.com/sprites/xyani/" + tempname + ".gif"
 	}
 	var newname = ''
@@ -752,16 +772,16 @@ function sendpokemon(msg, pokemon, abilities, stats, types, shiny, strong, weak)
 	console.log(types[0])
 	var color = typecol[types[0]]
 	var embedmsg = new Discord.RichEmbed()
-	.setTitle(newname.charAt(0).toUpperCase() + newname.slice(1))
-	.setImage(link)
-	.addField("Stats:", statsstr(stats), true)
-	.addField("Abilities:", abilitiesstr(abilities), true)
-	.addField("Types:", typesstr(types), true)
-	.addField("Weak Against:", weakorstrprocess(weakagain(weak, types, tempname, abilities)), true)
-	.addField("Resistant Against:", weakorstrprocess(resagainst(weak, types, tempname, abilities)), true)
-	.setColor(color)
+		.setTitle(newname.charAt(0).toUpperCase() + newname.slice(1))
+		.setImage(link)
+		.addField("Stats:", statsstr(stats), true)
+		.addField("Abilities:", abilitiesstr(abilities), true)
+		.addField("Types:", typesstr(types), true)
+		.addField("Weak Against:", weakorstrprocess(weakagain(weak, types, tempname, abilities)), true)
+		.addField("Resistant Against:", weakorstrprocess(resagainst(weak, types, tempname, abilities)), true)
+		.setColor(color)
 	var immune = immuneagain(weak, types, abilities)
-	if(immune.length > 0){
+	if (immune.length > 0) {
 		embedmsg = embedmsg.addField("Immune Against:", weakorstrprocess(immune), true)
 	}
 	embedmsg = embedmsg.addField("Super Effective Against:", typesstr(effectagain(strong, types)), true)
@@ -787,7 +807,7 @@ function abilitiesstr(arr) {
 
 function typesstr(arr) {
 	var type = ''
-	if(arr.length > 0){
+	if (arr.length > 0) {
 		arr.forEach(function (item, index) {
 			type = type + emotes[item] + " " + item.charAt(0).toUpperCase() + item.slice(1) + "\n";
 		})
@@ -805,9 +825,9 @@ function statsstr(arr) {
 	return stats;
 }
 
-function weakorstrprocess(arr){
+function weakorstrprocess(arr) {
 	var type = ''
-	if(arr.length > 0){
+	if (arr.length > 0) {
 		arr.forEach(function (item, index) {
 			type = type + emotes[item.type] + " " + item.type.charAt(0).toUpperCase() + item.type.slice(1) + " (" + item.effect + ")" + "\n";
 		})
@@ -819,43 +839,59 @@ function weakorstrprocess(arr){
 
 function weakagain(arr, types, pokemon) {
 	var keys = [];
-	if (pokemon.includes("necrozma") && !pokemon.includes("ultra") && types.length == 2 && types[1] != null){
+	if (pokemon.includes("necrozma") && !pokemon.includes("ultra") && types.length == 2 && types[1] != null) {
 		_.each(arr, function (val, key) {
 			if (val == 40000) {
-				keys.push({"type" : key,
-						   "effect" : "x3"});
+				keys.push({
+					"type": key,
+					"effect": "x3"
+				});
 			} else if (val > 15000) {
-				keys.push({"type" : key,
-						   "effect" : "x1.5"});
+				keys.push({
+					"type": key,
+					"effect": "x1.5"
+				});
 			}
 		});
-	} else if (pokemon.includes("venusaur-mega")){
-		keys.push({"type" : "flying",
-				   "effect" : "x2"});
-		keys.push({"type" : "psychic",
-				   "effect" : "x2"});
+	} else if (pokemon.includes("venusaur-mega")) {
+		keys.push({
+			"type": "flying",
+			"effect": "x2"
+		});
+		keys.push({
+			"type": "psychic",
+			"effect": "x2"
+		});
 	} else if (pokemon.includes("necrozma") && !pokemon.includes("ultra")) {
 		_.each(arr, function (val, key) {
 			if (val > 100) {
-				keys.push({"type" : key,
-						   "effect" : "x1.5"});
+				keys.push({
+					"type": key,
+					"effect": "x1.5"
+				});
 			}
 		});
 	} else if (types.length == 2 && types[1] != null) {
 		_.each(arr, function (val, key) {
 			if (val == 40000) {
-				keys.push({"type" : key,
-						   "effect" : "x4"});
+				keys.push({
+					"type": key,
+					"effect": "x4"
+				});
 			} else if (val > 15000) {
-				keys.push({"type" : key,
-						   "effect" : "x2"});
+				keys.push({
+					"type": key,
+					"effect": "x2"
+				});
 			}
 		});
 	} else {
 		_.each(arr, function (val, key) {
 			if (val > 100) {
-				keys.push({"type" : key,
-						   "effect" : "x2"});
+				keys.push({
+					"type": key,
+					"effect": "x2"
+				});
 			}
 		});
 	}
@@ -869,58 +905,94 @@ function immuneagain(arr, types, abilities) {
 	var voltabsorb = abilities.includes("volt-absorb") && abilities.length == 1
 	var lightningrod = abilities.includes("lightning-rod") && abilities.length == 1
 	var levitate = abilities.includes("levitate") && abilities.length == 1
-	if (waterabsorb){
-		keys.push({"type" : "water",
-				   "effect" : "x0"})
+	if (waterabsorb) {
+		keys.push({
+			"type": "water",
+			"effect": "x0"
+		})
 	}
-	if (voltabsorb || lightningrod){
-		keys.push({"type" : "electric",
-				   "effect" : "x0"})
+	if (voltabsorb || lightningrod) {
+		keys.push({
+			"type": "electric",
+			"effect": "x0"
+		})
 	}
-	if (levitate){
-		keys.push({"type" : "ground",
-				   "effect" : "x0"})
+	if (levitate) {
+		keys.push({
+			"type": "ground",
+			"effect": "x0"
+		})
 	}
-	if (wonderguard){
-		keys.push({"type" : "normal",
-				   "effect" : "x0"})
-		keys.push({"type" : "fighting",
-				   "effect" : "x0"})
-		keys.push({"type" : "poison",
-				   "effect" : "x0"})
-		keys.push({"type" : "ground",
-				   "effect" : "x0"})
-		keys.push({"type" : "bug",
-				   "effect" : "x0"})
-		keys.push({"type" : "steel",
-				   "effect" : "x0"})
-		keys.push({"type" : "water",
-				   "effect" : "x0"})
-		keys.push({"type" : "grass",
-				   "effect" : "x0"})
-		keys.push({"type" : "electric",
-				   "effect" : "x0"})
-		keys.push({"type" : "psychic",
-				   "effect" : "x0"})
-		keys.push({"type" : "ice",
-				   "effect" : "x0"})
-		keys.push({"type" : "dragon",
-				   "effect" : "x0"})
-		keys.push({"type" : "fairy",
-				   "effect" : "x0"})
-	} 
+	if (wonderguard) {
+		keys.push({
+			"type": "normal",
+			"effect": "x0"
+		})
+		keys.push({
+			"type": "fighting",
+			"effect": "x0"
+		})
+		keys.push({
+			"type": "poison",
+			"effect": "x0"
+		})
+		keys.push({
+			"type": "ground",
+			"effect": "x0"
+		})
+		keys.push({
+			"type": "bug",
+			"effect": "x0"
+		})
+		keys.push({
+			"type": "steel",
+			"effect": "x0"
+		})
+		keys.push({
+			"type": "water",
+			"effect": "x0"
+		})
+		keys.push({
+			"type": "grass",
+			"effect": "x0"
+		})
+		keys.push({
+			"type": "electric",
+			"effect": "x0"
+		})
+		keys.push({
+			"type": "psychic",
+			"effect": "x0"
+		})
+		keys.push({
+			"type": "ice",
+			"effect": "x0"
+		})
+		keys.push({
+			"type": "dragon",
+			"effect": "x0"
+		})
+		keys.push({
+			"type": "fairy",
+			"effect": "x0"
+		})
+	}
 	if (types.length == 2 && types[1] != null) {
 		_.each(arr, function (val, key) {
 			if (val == 0) {
-				keys.push({"type" : key,
-						   "effect" : "x0"});
+				keys.push({
+					"type": key,
+					"effect": "x0"
+				});
 			}
 		});
 	} else {
 		_.each(arr, function (val, key) {
 			if (val == 0) {
-				keys.push({"type" : key,
-						   "effect" : "x0"});
+				keys.push({
+					"type": key,
+					"effect": "x0"
+				});
 			}
 		});
 	}
@@ -935,30 +1007,43 @@ function resagainst(arr, types, pokemon, abilities) {
 		if (types.length == 2 && types[1] != null) {
 			_.each(arr, function (val, key) {
 				if (val == 2500 && !hasability) {
-					keys.push({"type" : key,
-							   "effect" : "x1/4"});
+					keys.push({
+						"type": key,
+						"effect": "x1/4"
+					});
 				} else if (val == 5000 && !hasability) {
-					keys.push({"type" : key,
-							   "effect" : "x1/2"});
+					keys.push({
+						"type": key,
+						"effect": "x1/2"
+					});
 				} else if (val == 2500 && hasability && inability != key) {
-					keys.push({"type" : key,
-							   "effect" : "x1/4"});
+					keys.push({
+						"type": key,
+						"effect": "x1/4"
+					});
 				} else if (val == 5000 && hasability && inability != key) {
-					keys.push({"type" : key,
-							   "effect" : "x1/2"});
+					keys.push({
+						"type": key,
+						"effect": "x1/2"
+					});
 				}
 			});
 		} else {
 			_.each(arr, function (val, key) {
 				if (val < 100 && val > 0 && !hasability) {
-					keys.push({"type" : key,
-							   "effect" : "x1/2"});
+					keys.push({
+						"type": key,
+						"effect": "x1/2"
+					});
 				} else if (val < 100 && val > 0 && hasability && inability != key) {
-					keys.push({"type" : key,
-							   "effect" : "x1/2"});
+					keys.push({
+						"type": key,
+						"effect": "x1/2"
+					});
 				}
 			});
-		}}
+		}
+	}
 	return keys;
 }
 
