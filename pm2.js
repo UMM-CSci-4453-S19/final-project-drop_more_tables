@@ -6,6 +6,6 @@ var pm2 = require('pm2');
   setTimeout(function worker() {
     console.log("Restarting app...");
     pm2.restart('index', function() {});
-    setTimeout(worker, 1000);
-    }, 1000);
+    setTimeout(worker, 1800000);
+    }, 1800000);
   });
