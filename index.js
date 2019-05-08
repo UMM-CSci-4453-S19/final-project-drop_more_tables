@@ -115,6 +115,7 @@ bot.on('message', function (msg) {
 	if (msg.content.startsWith(prefix)) {
 		msgcon = msg.content.toLowerCase()
 		const args = msgcon.slice(prefix.length).trim().split(/ +/g)
+		var mention = msg.mentions.users
 
 		if (args[0] === "help") {
 			var embdmsg = new Discord.RichEmbed()
@@ -205,14 +206,13 @@ bot.on('message', function (msg) {
 			var speed = parseInt(args[9]).toString()
 			var type = args[10]
 			var img = ''
-			if(args[11] && !args[11].includes('delimiter') && !args[11].includes(';')){
+			if(args[11] && validURL(args[11]) && !args[11].includes('delimiter') && !args[11].includes(';')){
 				img = args[11]
 			}
-			if(health && attack && specialattack && defense && specialdefense && speed){
+			if(health != "NaN" && attack != "NaN" && specialattack != "NaN" && defense != "NaN" && specialdefense != "NaN" && speed != "NaN"){
 				var sql = "call CustomPokemonInsert(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 				var inputs = [uid, name, abilities, health, attack, specialattack, defense, specialdefense, speed, type, img]
 				sql = mysql.format(sql, inputs);
-				console.log(sql)
 				connection.query(sql,(function(msg){return function (err, rows, fields) {
 					if(err){console.log("We have an insertion error:");
              				console.log(err);
@@ -234,7 +234,6 @@ bot.on('message', function (msg) {
 			var sql = "Delete from ?? where names = ?"
 			var inputs = [uid, name]
 			sql = mysql.format(sql, inputs);
-			console.log(sql)
 			connection.query(sql,(function(msg){return function (err, rows, fields) {
 				if(err){console.log("We have an deletion error:");
              			console.log(err);
@@ -248,74 +247,143 @@ bot.on('message', function (msg) {
 		}
 
 		if (args[0] === "custom" && args[1] && args[1] == "all") {
-			var uid = "user_" + msg.member.id.toString();
-			var sql = "Select names from ??"
-			var inputs = [uid]
-			sql = mysql.format(sql, inputs);
-			console.log(sql)
-			connection.query(sql,(function(msg){return function (err, rows, fields) {
-				if(err){console.log("We have an selection error:");
-             			console.log(err);
-             			msg.channel.send("Failed to gather pokemon.")
-             	} else {
-             		var dbfarr = '';
+			if(mention.size == 0){
+				var uid = "user_" + msg.member.id.toString();
+				var sql = "Select names from ??"
+				var inputs = [uid]
+				sql = mysql.format(sql, inputs);
+				connection.query(sql,(function(msg){return function (err, rows, fields) {
+					if(err){console.log("We have an selection error:");
+	             			console.log(err);
+	             			msg.channel.send("Failed to gather pokemon.")
+	             	} else {
+	             		var dbfarr = '';
 
-					rows.forEach(function (item, index) {
-						dbfarr = dbfarr + item.names + "\n";
-					});
-             		msg.channel.send("**Your Pokemon:**\n" + dbfarr)
-            	}
-			}})(msg))
+						rows.forEach(function (item, index) {
+							dbfarr = dbfarr + item.names + "\n";
+						});
+	             		msg.channel.send("**Your Pokemon:**\n" + dbfarr)
+	            	}
+				}})(msg))
+			} else {
+				var uid = "user_" + mention.first().id.toString()
+				var sql = "Select names from ??"
+				var inputs = [uid]
+				sql = mysql.format(sql, inputs);
+				connection.query(sql,(function(msg){return function (err, rows, fields) {
+					if(err){console.log("We have an selection error:");
+	             			console.log(err);
+	             			msg.channel.send("Failed to gather pokemon.")
+	             	} else {
+	             		var dbfarr = '';
+
+						rows.forEach(function (item, index) {
+							dbfarr = dbfarr + item.names + "\n";
+						});
+	             		msg.channel.send("**Their Pokemon:**\n" + dbfarr)
+	            	}
+				}})(msg))
+			}
 		} else if (args[0] === "custom" && args[1] == "all") {
 			msg.channel.send("Invalid input")
 		}
 
 		if (args[0] === "custom" && args[2] && args[1] == "view" && !args[2].includes("delimiter") && !args[2].includes(";")) {
-			var uid = "user_" + msg.member.id.toString();
-			var name = args[2]
-			var sql = "Select * from ?? where names = ?"
-			var inputs = [uid, name]
-			sql = mysql.format(sql, inputs);
-			console.log(sql)
-			connection.query(sql,(function(msg){return function (err, rows, fields) {
-				if(err){console.log("We have an selection error:");
-             			console.log(err);
-             			msg.channel.send("Failed to gather pokemon.")
-             	} else {
-             		var row = rows[0]
-             		if(row){
-             			console.log(rows[0])
-             			var stats = "Hp: " + row.health + "\n"
-             			stats = stats + "Attack: " + row.atk + "\n"
-             			stats = stats + "Special-attack: " + row.specialatk + "\n"
-             			stats = stats + "Defense: " + row.def + "\n"
-             			stats = stats + "Special-defense: " + row.specialdef + "\n"
-             			stats = stats + "Speed: " + row.spd + "\n"
-             			var img = row.image
-             			var color
- 					    if (msg.member.colorRole != null) {
-  					    	color = msg.member.displayColor
- 					    } else {
-  					    	color = Math.floor(Math.random() * 16777214) + 1
- 					    }
-             			var embedmsg = new Discord.RichEmbed()
-										.setTitle(row.names.charAt(0).toUpperCase() + row.names.slice(1))
-										.addField("Stats:", stats, true)
-										.addField("Ability:", row.abilities, true)
-										.addField("Type:", row.types, true)
-										.setImage(img)
-										.setColor(color)
-             			msg.channel.send(embedmsg)
-             		} else {
-             			msg.channel.send("Invalid Pokemon.")
-             		}
-            	}
-			}})(msg))
+			if(mention.size == 0){
+				var uid = "user_" + msg.member.id.toString();
+				var name = args[2]
+				var sql = "Select * from ?? where names = ?"
+				var inputs = [uid, name]
+				sql = mysql.format(sql, inputs);
+				connection.query(sql,(function(msg){return function (err, rows, fields) {
+					if(err){console.log("We have an selection error:");
+	             			console.log(err);
+	             			msg.channel.send("Failed to gather pokemon.")
+	             	} else {
+	             		var row = rows[0]
+	             		if(row){
+	             			var stats = "Hp: " + row.health + "\n"
+	             			stats = stats + "Attack: " + row.atk + "\n"
+	             			stats = stats + "Special-attack: " + row.specialatk + "\n"
+	             			stats = stats + "Defense: " + row.def + "\n"
+	             			stats = stats + "Special-defense: " + row.specialdef + "\n"
+	             			stats = stats + "Speed: " + row.spd + "\n"
+	             			var img = row.image
+	             			var color
+	 					    if (msg.member.colorRole != null) {
+	  					    	color = msg.member.displayColor
+	 					    } else {
+	  					    	color = Math.floor(Math.random() * 16777214) + 1
+	 					    }
+	             			var embedmsg = new Discord.RichEmbed()
+											.setTitle(row.names.charAt(0).toUpperCase() + row.names.slice(1))
+											.addField("Stats:", stats, true)
+											.addField("Ability:", row.abilities, true)
+											.addField("Type:", row.types, true)
+											.setImage(img)
+											.setColor(color)
+	             			msg.channel.send(embedmsg)
+	             		} else {
+	             			msg.channel.send("Invalid Pokemon.")
+	             		}
+	            	}
+				}})(msg))
+			} else {
+				var uid = "user_" + mention.first().id.toString()
+				var sql = "Select * from ?? where names = ?"
+				var name = args[2]
+				var inputs = [uid, name]
+				sql = mysql.format(sql, inputs);
+				connection.query(sql,(function(msg){return function (err, rows, fields) {
+					if(err){console.log("We have an selection error:");
+	             			console.log(err);
+	             			msg.channel.send("Failed to gather pokemon.")
+	             	} else {
+	             		var row = rows[0]
+	             		if(row){
+	             			var stats = "Hp: " + row.health + "\n"
+	             			stats = stats + "Attack: " + row.atk + "\n"
+	             			stats = stats + "Special-attack: " + row.specialatk + "\n"
+	             			stats = stats + "Defense: " + row.def + "\n"
+	             			stats = stats + "Special-defense: " + row.specialdef + "\n"
+	             			stats = stats + "Speed: " + row.spd + "\n"
+	             			var img = row.image
+	             			var color
+	 					    if (msg.member.colorRole != null) {
+	  					    	color = msg.member.displayColor
+	 					    } else {
+	  					    	color = Math.floor(Math.random() * 16777214) + 1
+	 					    }
+	             			var embedmsg = new Discord.RichEmbed()
+											.setTitle(row.names.charAt(0).toUpperCase() + row.names.slice(1))
+											.addField("Stats:", stats, true)
+											.addField("Ability:", row.abilities, true)
+											.addField("Type:", row.types, true)
+											.setImage(img)
+											.setColor(color)
+	             			msg.channel.send(embedmsg)
+	             		} else {
+	             			msg.channel.send("Invalid Pokemon.")
+	             		}
+	            	}
+				}})(msg))
+			}
 		} else if (args[0] === "custom" && args[1] == "view") {
 			msg.channel.send("Invalid input")
 		}
 	}
 })
+
+//source: https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url
+function validURL(str) {
+  var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+    '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+    '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+    '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+  return !!pattern.test(str);
+}
 
 function pokemoninfo(msg, pokemon, shiny) {
 	var info = '';
